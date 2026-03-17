@@ -800,6 +800,204 @@
   40% { transform: scale(1); opacity: 1; }
 }
 
+/* ===== CONTENT ENHANCEMENTS (GitBook-quality) ===== */
+.contentArea :global(.ProseMirror) {
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 15px;
+  line-height: 1.75;
+  letter-spacing: -0.003em;
+
+  @mixin light {
+    color: var(--mantine-color-gray-8);
+  }
+  @mixin dark {
+    color: var(--mantine-color-dark-0);
+  }
+}
+
+/* Enhanced headings */
+.contentArea :global(.ProseMirror) h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.contentArea :global(.ProseMirror) h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.3rem;
+  letter-spacing: -0.02em;
+  border-bottom: 1px solid;
+
+  @mixin light {
+    border-color: var(--mantine-color-gray-2);
+  }
+  @mixin dark {
+    border-color: var(--mantine-color-dark-5);
+  }
+}
+
+.contentArea :global(.ProseMirror) h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.015em;
+}
+
+/* Better links — GitBook-style colored links */
+.contentArea :global(.ProseMirror) a {
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 120ms ease, border-color 120ms ease;
+
+  @mixin light {
+    color: var(--mantine-color-blue-7);
+    border-bottom: 1px solid var(--mantine-color-blue-2);
+  }
+  @mixin dark {
+    color: var(--mantine-color-blue-4);
+    border-bottom: 1px solid rgba(56, 139, 253, 0.3);
+  }
+
+  &:hover {
+    @mixin light {
+      color: var(--mantine-color-blue-8);
+      border-bottom-color: var(--mantine-color-blue-5);
+    }
+    @mixin dark {
+      color: var(--mantine-color-blue-3);
+      border-bottom-color: var(--mantine-color-blue-5);
+    }
+  }
+}
+
+/* Better paragraphs spacing */
+.contentArea :global(.ProseMirror) p {
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+}
+
+/* Better lists */
+.contentArea :global(.ProseMirror) ul,
+.contentArea :global(.ProseMirror) ol {
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.contentArea :global(.ProseMirror) li {
+  margin-bottom: 0.25em;
+}
+
+.contentArea :global(.ProseMirror) li > p {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+/* Better blockquotes */
+.contentArea :global(.ProseMirror) blockquote {
+  padding: 0.75rem 1.25rem;
+  margin: 1rem 0;
+  border-left-width: 3px;
+  border-radius: 0 4px 4px 0;
+
+  @mixin light {
+    border-left-color: var(--mantine-color-gray-4);
+    background-color: var(--mantine-color-gray-0);
+  }
+  @mixin dark {
+    border-left-color: var(--mantine-color-dark-4);
+    background-color: var(--mantine-color-dark-7);
+  }
+}
+
+/* Better inline code */
+.contentArea :global(.ProseMirror) code {
+  font-size: 0.875em;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-weight: 500;
+
+  @mixin light {
+    background-color: var(--mantine-color-gray-1);
+    color: var(--mantine-color-pink-7);
+    border: 1px solid var(--mantine-color-gray-2);
+  }
+  @mixin dark {
+    background-color: var(--mantine-color-dark-6);
+    color: var(--mantine-color-pink-4);
+    border: 1px solid var(--mantine-color-dark-4);
+  }
+}
+
+/* Better code blocks */
+.contentArea :global(.ProseMirror) pre {
+  border-radius: 8px;
+  margin: 1rem 0;
+  border: 1px solid;
+
+  @mixin light {
+    border-color: var(--mantine-color-gray-2);
+  }
+  @mixin dark {
+    border-color: var(--mantine-color-dark-4);
+  }
+}
+
+/* Better horizontal rules */
+.contentArea :global(.ProseMirror) hr {
+  margin: 2rem 0;
+}
+
+/* Better images */
+.contentArea :global(.ProseMirror) img {
+  border-radius: 8px;
+  margin: 0.5rem 0;
+}
+
+/* Better tables */
+.contentArea :global(.ProseMirror) table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+/* Enhanced callout boxes */
+.contentArea :global(.react-renderer.node-callout) {
+  margin: 1rem 0;
+}
+
+/* Page title area */
+.contentArea :global(.page-title .ProseMirror h1) {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+/* Last updated text style */
+.lastUpdated {
+  font-size: 12px;
+  margin-bottom: 24px;
+
+  @mixin light {
+    color: var(--mantine-color-gray-5);
+  }
+  @mixin dark {
+    color: var(--mantine-color-dark-2);
+  }
+}
+
 /* ===== POWERED BY ===== */
 .poweredBy {
   text-align: center;

@@ -158,6 +158,17 @@ export default function DocsPortalLayout() {
                   flat={flat}
                 />
 
+                {pageData.page.updatedAt && (
+                  <div className={classes.lastUpdated}>
+                    Last updated{" "}
+                    {new Date(pageData.page.updatedAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </div>
+                )}
+
                 <ReadonlyPageEditor
                   key={pageData.page.id}
                   title={pageData.page.title}
