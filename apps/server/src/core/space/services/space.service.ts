@@ -113,7 +113,7 @@ export class SpaceService {
         slug: createSpaceDto.slug,
         ...(createSpaceDto.type && { type: createSpaceDto.type }),
         ...(createSpaceDto.portalSettings && {
-          portalSettings: JSON.stringify(createSpaceDto.portalSettings),
+          portalSettings: createSpaceDto.portalSettings,
         }),
       },
       trx,
@@ -190,7 +190,7 @@ export class SpaceService {
           slug: updateSpaceDto.slug,
           ...(updateSpaceDto.type && { type: updateSpaceDto.type }),
           ...(updateSpaceDto.portalSettings !== undefined && {
-            portalSettings: JSON.stringify(updateSpaceDto.portalSettings),
+            portalSettings: updateSpaceDto.portalSettings,
           }),
         },
         updateSpaceDto.spaceId,

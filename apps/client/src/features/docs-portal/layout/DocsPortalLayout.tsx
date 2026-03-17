@@ -91,7 +91,11 @@ export default function DocsPortalLayout() {
     return <Error404 />;
   }
 
-  const portalSettings = space?.portalSettings || {};
+  // Defensive: portalSettings may be a string if double-serialized in DB
+  const rawSettings = space?.portalSettings;
+  const portalSettings = typeof rawSettings === 'string'
+    ? (() => { try { return JSON.parse(rawSettings); } catch { return {}; } })()
+    : rawSettings || {};
 
   return (
     <>

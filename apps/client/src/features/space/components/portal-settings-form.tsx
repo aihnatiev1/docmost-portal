@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Stack,
   TextInput,
@@ -62,13 +62,24 @@ export function PortalSettingsForm({
   const { t } = useTranslation();
   const updateSpaceMutation = useUpdateSpaceMutation();
 
+  const initialized = useRef(false);
   const [settings, setSettings] = useState<IPortalSettings>(
     portalSettings || {},
   );
 
+  // Only sync from props on initial mount, not after mutation updates cache
   useEffect(() => {
-    setSettings(portalSettings || {});
+    if (!initialized.current) {
+      setSettings(portalSettings || {});
+      initialized.current = true;
+    }
   }, [portalSettings]);
+
+  // Reset when switching to a different space
+  useEffect(() => {
+    initialized.current = false;
+    setSettings(portalSettings || {});
+  }, [spaceId]);
 
   const updateField = (field: string, value: any) => {
     setSettings((prev) => ({ ...prev, [field]: value }));
