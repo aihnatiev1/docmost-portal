@@ -1,19 +1,15 @@
-import {
-  Group,
-  Text,
-  TextInput,
-  ActionIcon,
-  Image,
-  Tooltip,
-  Menu,
-} from "@mantine/core";
+import { ActionIcon, Menu, Tooltip } from "@mantine/core";
 import {
   IconSearch,
   IconMenu2,
   IconLanguage,
 } from "@tabler/icons-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { IPortalSettings, IDocTranslation } from "../types/docs-portal.types";
+import {
+  IPortalSettings,
+  IDocTranslation,
+} from "../types/docs-portal.types";
+import classes from "../styles/docs-portal.module.css";
 
 interface DocsHeaderProps {
   portalSettings: IPortalSettings;
@@ -30,71 +26,76 @@ export default function DocsHeader({
   onSearchOpen,
   onToggleSidebar,
 }: DocsHeaderProps) {
+  const isMac =
+    typeof navigator !== "undefined" &&
+    /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+
   return (
-    <Group wrap="nowrap" justify="space-between" py="sm" px="xl" h="100%">
-      <Group wrap="nowrap" gap="sm">
-        <Tooltip label="Toggle sidebar">
-          <ActionIcon
-            variant="subtle"
-            onClick={onToggleSidebar}
-            hiddenFrom="sm"
-            size="sm"
-          >
-            <IconMenu2 size={20} />
-          </ActionIcon>
-        </Tooltip>
+    <div className={classes.headerInner}>
+      <div className={classes.headerBrand}>
+        <ActionIcon
+          variant="subtle"
+          color="gray"
+          onClick={onToggleSidebar}
+          hiddenFrom="sm"
+          size="sm"
+        >
+          <IconMenu2 size={18} stroke={1.5} />
+        </ActionIcon>
 
         {portalSettings.logo && (
-          <Image
+          <img
             src={portalSettings.logo}
-            alt="Logo"
-            h={28}
-            w="auto"
-            fit="contain"
+            alt=""
+            className={classes.brandLogo}
           />
         )}
 
-        <Text fw={600} size="lg" truncate>
+        <span className={classes.brandTitle}>
           {portalSettings.title || "Documentation"}
-        </Text>
-      </Group>
+        </span>
+      </div>
 
-      <Group wrap="nowrap" gap="xs">
-        <Tooltip label="Search (Ctrl+K)">
-          <TextInput
-            placeholder="Search docs..."
-            leftSection={<IconSearch size={16} />}
-            size="sm"
-            readOnly
-            onClick={onSearchOpen}
-            style={{ cursor: "pointer" }}
-            styles={{ input: { cursor: "pointer", width: 200 } }}
-            visibleFrom="sm"
-          />
-        </Tooltip>
+      <div className={classes.headerActions}>
+        {/* Desktop search trigger — GitBook style */}
+        <div
+          className={classes.searchTrigger}
+          onClick={onSearchOpen}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Enter" && onSearchOpen()}
+        >
+          <IconSearch size={15} stroke={1.5} />
+          <span className={classes.searchTriggerText}>Search docs…</span>
+          <span className={classes.searchShortcut}>
+            {isMac ? "⌘K" : "Ctrl+K"}
+          </span>
+        </div>
 
-        <Tooltip label="Search" hiddenFrom="sm">
-          <ActionIcon variant="subtle" onClick={onSearchOpen} size="sm">
-            <IconSearch size={20} />
-          </ActionIcon>
-        </Tooltip>
+        {/* Mobile search icon */}
+        <ActionIcon
+          variant="subtle"
+          color="gray"
+          onClick={onSearchOpen}
+          hiddenFrom="sm"
+          size="md"
+        >
+          <IconSearch size={18} stroke={1.5} />
+        </ActionIcon>
 
         {translations && translations.length > 0 && (
-          <Menu shadow="md" width={160}>
+          <Menu shadow="md" width={180} position="bottom-end">
             <Menu.Target>
-              <Tooltip label="Language">
-                <ActionIcon variant="subtle" size="sm">
-                  <IconLanguage size={20} />
+              <Tooltip label="Language" withArrow>
+                <ActionIcon variant="subtle" color="gray" size="md">
+                  <IconLanguage size={18} stroke={1.5} />
                 </ActionIcon>
               </Tooltip>
             </Menu.Target>
             <Menu.Dropdown>
+              <Menu.Label>Language</Menu.Label>
               {translations.map((t) => (
-                <Menu.Item
-                  key={t.locale}
-                  component="a"
-                  href={`/docs/${t.targetSlug}`}
-                >
+                <Menu.Item key={t.locale} component="a" href={`/docs/${t.targetSlug}`}>
                   {t.targetName} ({t.locale.toUpperCase()})
                 </Menu.Item>
               ))}
@@ -103,7 +104,7 @@ export default function DocsHeader({
         )}
 
         <ThemeToggle />
-      </Group>
-    </Group>
+      </div>
+    </div>
   );
 }

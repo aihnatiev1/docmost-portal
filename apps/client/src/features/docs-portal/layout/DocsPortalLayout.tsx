@@ -1,12 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
-import {
-  AppShell,
-  Container,
-  LoadingOverlay,
-  ScrollArea,
-} from "@mantine/core";
+import { useEffect } from "react";
+import { AppShell, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Outlet, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   useDocSpaceQuery,
@@ -26,6 +21,7 @@ import { TableOfContents } from "@/features/editor/components/table-of-contents/
 import { readOnlyEditorAtom } from "@/features/editor/atoms/editor-atoms";
 import { useAtomValue } from "jotai";
 import { Error404 } from "@/components/ui/error-404";
+import classes from "../styles/docs-portal.module.css";
 
 export default function DocsPortalLayout() {
   const { spaceSlug, pageSlug } = useParams<{
@@ -67,7 +63,7 @@ export default function DocsPortalLayout() {
 
   const readOnlyEditor = useAtomValue(readOnlyEditorAtom);
 
-  // Keyboard shortcut Ctrl+K
+  // Keyboard shortcut Ctrl+K / Cmd+K
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
@@ -80,7 +76,15 @@ export default function DocsPortalLayout() {
   }, [openSearch]);
 
   if (spaceLoading) {
-    return <LoadingOverlay visible />;
+    return (
+      <div className={classes.loadingContainer}>
+        <div className={classes.loadingDots}>
+          <div className={classes.loadingDot} />
+          <div className={classes.loadingDot} />
+          <div className={classes.loadingDot} />
+        </div>
+      </div>
+    );
   }
 
   if (isError && pageSlug) {
@@ -103,6 +107,9 @@ export default function DocsPortalLayout() {
             content={pageData.page.metaDescription}
           />
         )}
+        {portalSettings.favicon && (
+          <link rel="icon" href={portalSettings.favicon} />
+        )}
       </Helmet>
 
       {portalSettings.customCss && (
@@ -110,20 +117,20 @@ export default function DocsPortalLayout() {
       )}
 
       <AppShell
-        header={{ height: 56 }}
+        header={{ height: 60 }}
         navbar={{
-          width: 260,
+          width: 280,
           breakpoint: "sm",
           collapsed: { mobile: !sidebarOpened, desktop: !sidebarOpened },
         }}
         aside={{
-          width: 220,
+          width: 240,
           breakpoint: "md",
           collapsed: { mobile: true, desktop: false },
         }}
-        padding="md"
+        padding={0}
       >
-        <AppShell.Header>
+        <AppShell.Header className={classes.header}>
           <DocsHeader
             portalSettings={portalSettings}
             translations={translations}
@@ -132,12 +139,12 @@ export default function DocsPortalLayout() {
           />
         </AppShell.Header>
 
-        <AppShell.Navbar p="xs">
+        <AppShell.Navbar className={classes.navbar}>
           <DocsNavTree tree={tree} spaceSlug={spaceSlug!} />
         </AppShell.Navbar>
 
         <AppShell.Main>
-          <Container size={720} p={0}>
+          <div className={classes.contentArea}>
             {pageData && (
               <>
                 <DocsBreadcrumbs
@@ -163,18 +170,30 @@ export default function DocsPortalLayout() {
               </>
             )}
 
-            {pageLoading && <LoadingOverlay visible />}
-          </Container>
+            {pageLoading && (
+              <div className={classes.loadingContainer} style={{ minHeight: "40vh" }}>
+                <div className={classes.loadingDots}>
+                  <div className={classes.loadingDot} />
+                  <div className={classes.loadingDot} />
+                  <div className={classes.loadingDot} />
+                </div>
+              </div>
+            )}
+          </div>
         </AppShell.Main>
 
-        <AppShell.Aside p="md">
+        <AppShell.Aside className={classes.aside}>
           <ScrollArea
             style={{ height: "calc(100vh - 80px)" }}
-            scrollbarSize={5}
+            scrollbarSize={4}
+            type="hover"
           >
-            {readOnlyEditor && (
-              <TableOfContents isShare={true} editor={readOnlyEditor} />
-            )}
+            <div className={classes.tocTitle}>On this page</div>
+            <div style={{ paddingBottom: 50 }}>
+              {readOnlyEditor && (
+                <TableOfContents isShare={true} editor={readOnlyEditor} />
+              )}
+            </div>
           </ScrollArea>
         </AppShell.Aside>
       </AppShell>

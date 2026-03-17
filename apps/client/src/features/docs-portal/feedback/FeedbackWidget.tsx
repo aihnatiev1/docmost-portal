@@ -1,16 +1,9 @@
 import { useState } from "react";
-import {
-  Group,
-  Text,
-  ActionIcon,
-  Textarea,
-  Button,
-  Paper,
-  Stack,
-  Transition,
-} from "@mantine/core";
+import { Textarea, Button, Transition } from "@mantine/core";
 import { IconThumbUp, IconThumbDown } from "@tabler/icons-react";
 import { useFeedbackMutation } from "../queries/docs-portal-query";
+import classes from "../styles/docs-portal.module.css";
+import cx from "clsx";
 
 interface FeedbackWidgetProps {
   pageId: string;
@@ -45,64 +38,75 @@ export default function FeedbackWidget({ pageId }: FeedbackWidgetProps) {
 
   if (submitted) {
     return (
-      <Paper p="md" withBorder radius="md">
-        <Text size="sm" c="dimmed" ta="center">
-          Thanks for your feedback!
-        </Text>
-      </Paper>
+      <div className={classes.feedbackContainer}>
+        <span className={classes.feedbackThanks}>
+          ✓ Thanks for your feedback!
+        </span>
+      </div>
     );
   }
 
   return (
-    <Paper p="md" withBorder radius="md">
-      <Stack gap="sm">
-        <Group justify="center" gap="md">
-          <Text size="sm" c="dimmed">
-            Was this page helpful?
-          </Text>
-          <Group gap="xs">
-            <ActionIcon
-              variant={selectedHelpful === true ? "filled" : "light"}
-              color="green"
-              onClick={() => handleVote(true)}
-              size="lg"
-            >
-              <IconThumbUp size={18} />
-            </ActionIcon>
-            <ActionIcon
-              variant={selectedHelpful === false ? "filled" : "light"}
-              color="red"
-              onClick={() => handleVote(false)}
-              size="lg"
-            >
-              <IconThumbDown size={18} />
-            </ActionIcon>
-          </Group>
-        </Group>
+    <div className={classes.feedbackContainer}>
+      <span className={classes.feedbackQuestion}>
+        Was this page helpful?
+      </span>
 
-        <Transition mounted={showComment} transition="slide-down">
-          {(styles) => (
-            <Stack gap="xs" style={styles}>
-              <Textarea
-                placeholder="How can we improve this page?"
-                value={comment}
-                onChange={(e) => setComment(e.currentTarget.value)}
-                maxLength={1000}
-                autosize
-                minRows={2}
-                maxRows={4}
-              />
-              <Button
-                size="xs"
-                onClick={handleSubmitComment}
-                loading={mutation.isPending}
-              >
-                Send feedback
-              </Button>
-            </Stack>
+      <div className={classes.feedbackButtons}>
+        <button
+          className={cx(
+            classes.feedbackBtn,
+            selectedHelpful === true && classes.feedbackBtnActive,
           )}
-        </Transition>
-      </Stack>
-    </Paper>
+          onClick={() => handleVote(true)}
+          type="button"
+        >
+          <IconThumbUp size={16} stroke={1.5} />
+          Yes
+        </button>
+        <button
+          className={cx(
+            classes.feedbackBtn,
+            selectedHelpful === false && classes.feedbackBtnActive,
+          )}
+          onClick={() => handleVote(false)}
+          type="button"
+        >
+          <IconThumbDown size={16} stroke={1.5} />
+          No
+        </button>
+      </div>
+
+      <Transition mounted={showComment} transition="slide-down" duration={200}>
+        {(styles) => (
+          <div className={classes.feedbackCommentArea} style={styles}>
+            <Textarea
+              placeholder="How can we improve this page?"
+              value={comment}
+              onChange={(e) => setComment(e.currentTarget.value)}
+              maxLength={1000}
+              autosize
+              minRows={2}
+              maxRows={4}
+              mb="xs"
+              styles={{
+                input: {
+                  fontSize: 14,
+                  border: "1px solid var(--mantine-color-default-border)",
+                },
+              }}
+            />
+            <Button
+              size="xs"
+              variant="light"
+              onClick={handleSubmitComment}
+              loading={mutation.isPending}
+            >
+              Send feedback
+            </Button>
+          </div>
+        )}
+      </Transition>
+    </div>
   );
 }

@@ -1,7 +1,8 @@
-import { Breadcrumbs, Anchor, Text } from "@mantine/core";
 import { Link } from "react-router-dom";
+import { IconChevronRight } from "@tabler/icons-react";
 import { ITreeNode } from "../types/docs-portal.types";
 import { buildPageSlug } from "../hooks/use-doc-tree";
+import classes from "../styles/docs-portal.module.css";
 
 interface DocsBreadcrumbsProps {
   spaceSlug: string;
@@ -21,34 +22,33 @@ export default function DocsBreadcrumbs({
   const breadcrumbs = buildBreadcrumbChain(currentPageId, flat);
 
   return (
-    <Breadcrumbs
-      mb="md"
-      styles={{
-        root: { flexWrap: "wrap" },
-        separator: { margin: "0 4px" },
-      }}
-    >
-      <Anchor component={Link} to={`/docs/${spaceSlug}`} size="sm" c="dimmed">
+    <nav className={classes.breadcrumbs}>
+      <Link to={`/docs/${spaceSlug}`} className={classes.breadcrumbLink}>
         {spaceName}
-      </Anchor>
-      {breadcrumbs.map((item, index) =>
-        index < breadcrumbs.length - 1 ? (
-          <Anchor
-            key={item.id}
-            component={Link}
-            to={`/docs/${spaceSlug}/${buildPageSlug(item.title, item.slugId)}`}
-            size="sm"
-            c="dimmed"
-          >
-            {item.title || "Untitled"}
-          </Anchor>
-        ) : (
-          <Text key={item.id} size="sm" c="dimmed">
-            {item.title || "Untitled"}
-          </Text>
-        ),
-      )}
-    </Breadcrumbs>
+      </Link>
+
+      {breadcrumbs.map((item, index) => (
+        <span key={item.id} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <IconChevronRight
+            size={12}
+            stroke={1.5}
+            className={classes.breadcrumbSeparator}
+          />
+          {index < breadcrumbs.length - 1 ? (
+            <Link
+              to={`/docs/${spaceSlug}/${buildPageSlug(item.title, item.slugId)}`}
+              className={classes.breadcrumbLink}
+            >
+              {item.title || "Untitled"}
+            </Link>
+          ) : (
+            <span className={classes.breadcrumbCurrent}>
+              {item.title || "Untitled"}
+            </span>
+          )}
+        </span>
+      ))}
+    </nav>
   );
 }
 

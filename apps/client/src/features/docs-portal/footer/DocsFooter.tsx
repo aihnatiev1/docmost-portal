@@ -1,9 +1,10 @@
-import { Group, Text, Anchor, Divider, Stack, Paper } from "@mantine/core";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { ITreeNode, IPortalSettings } from "../types/docs-portal.types";
 import { buildPageSlug } from "../hooks/use-doc-tree";
 import FeedbackWidget from "../feedback/FeedbackWidget";
+import classes from "../styles/docs-portal.module.css";
+import cx from "clsx";
 
 interface DocsFooterProps {
   spaceSlug: string;
@@ -26,74 +27,65 @@ export default function DocsFooter({
       : null;
 
   return (
-    <Stack gap="lg" mt="xl">
+    <div>
       <FeedbackWidget pageId={pageId} />
 
       {(prevPage || nextPage) && (
-        <Group justify="space-between" grow>
+        <div className={classes.pageNavigation}>
           {prevPage ? (
-            <Paper
-              component={Link}
+            <Link
               to={`/docs/${spaceSlug}/${buildPageSlug(prevPage.title, prevPage.slugId)}`}
-              p="md"
-              withBorder
-              radius="md"
-              style={{ textDecoration: "none" }}
+              className={classes.pageNavCard}
             >
-              <Group gap="xs">
-                <IconArrowLeft size={16} />
-                <div>
-                  <Text size="xs" c="dimmed">
-                    Previous
-                  </Text>
-                  <Text size="sm" fw={500} truncate>
-                    {prevPage.title || "Untitled"}
-                  </Text>
-                </div>
-              </Group>
-            </Paper>
+              <span className={classes.pageNavLabel}>
+                <IconArrowLeft size={12} stroke={2} />
+                Previous
+              </span>
+              <span className={classes.pageNavTitle}>
+                {prevPage.title || "Untitled"}
+              </span>
+            </Link>
           ) : (
             <div />
           )}
           {nextPage ? (
-            <Paper
-              component={Link}
+            <Link
               to={`/docs/${spaceSlug}/${buildPageSlug(nextPage.title, nextPage.slugId)}`}
-              p="md"
-              withBorder
-              radius="md"
-              style={{ textDecoration: "none", textAlign: "right" }}
+              className={cx(classes.pageNavCard, classes.pageNavCardNext)}
             >
-              <Group gap="xs" justify="flex-end">
-                <div>
-                  <Text size="xs" c="dimmed">
-                    Next
-                  </Text>
-                  <Text size="sm" fw={500} truncate>
-                    {nextPage.title || "Untitled"}
-                  </Text>
-                </div>
-                <IconArrowRight size={16} />
-              </Group>
-            </Paper>
+              <span className={classes.pageNavLabel} style={{ justifyContent: "flex-end" }}>
+                Next
+                <IconArrowRight size={12} stroke={2} />
+              </span>
+              <span className={classes.pageNavTitle}>
+                {nextPage.title || "Untitled"}
+              </span>
+            </Link>
           ) : (
             <div />
           )}
-        </Group>
+        </div>
       )}
 
       {portalSettings.footerLinks && portalSettings.footerLinks.length > 0 && (
-        <>
-          <Divider />
-          <Group justify="center" gap="md" pb="md">
-            {portalSettings.footerLinks.map((link, i) => (
-              <Anchor key={i} href={link.url} size="sm" c="dimmed" target="_blank">
-                {link.label}
-              </Anchor>
-            ))}
-          </Group>
-        </>
+        <div className={classes.footerLinks}>
+          {portalSettings.footerLinks.map((link, i) => (
+            <a
+              key={i}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={classes.footerLink}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
       )}
-    </Stack>
+
+      <div className={classes.poweredBy}>
+        Powered by <a href="https://docmost.com" target="_blank" rel="noopener noreferrer">Docmost</a>
+      </div>
+    </div>
   );
 }

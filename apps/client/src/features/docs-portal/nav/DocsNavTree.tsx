@@ -1,13 +1,11 @@
 import { useState } from "react";
-import {
-  NavLink,
-  ScrollArea,
-  Text,
-} from "@mantine/core";
-import { IconChevronRight, IconFile } from "@tabler/icons-react";
+import { ScrollArea } from "@mantine/core";
+import { IconChevronRight, IconFileText } from "@tabler/icons-react";
 import { Link, useParams } from "react-router-dom";
 import { ITreeNode } from "../types/docs-portal.types";
 import { buildPageSlug } from "../hooks/use-doc-tree";
+import classes from "../styles/docs-portal.module.css";
+import cx from "clsx";
 
 interface DocsNavTreeProps {
   tree: ITreeNode[];
@@ -33,58 +31,43 @@ function NavTreeItem({
 
   return (
     <>
-      <NavLink
-        component={Link}
+      <Link
         to={`/docs/${spaceSlug}/${buildPageSlug(node.title, node.slugId)}`}
-        label={
-          <Text size="sm" truncate>
-            {node.icon || ""} {node.title || "Untitled"}
-          </Text>
-        }
-        active={isActive}
-        opened={hasChildren ? opened : undefined}
-        onClick={
-          hasChildren
-            ? (e: React.MouseEvent) => {
-                // Only toggle if clicking the chevron area
-                const target = e.target as HTMLElement;
-                if (target.closest("[data-chevron]")) {
-                  e.preventDefault();
-                  setOpened((o) => !o);
-                }
-              }
-            : undefined
-        }
-        rightSection={
-          hasChildren ? (
-            <IconChevronRight
-              size={14}
-              data-chevron
-              style={{
-                transform: opened ? "rotate(90deg)" : "none",
-                transition: "transform 150ms ease",
-                cursor: "pointer",
-              }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setOpened((o) => !o);
-              }}
-            />
-          ) : undefined
-        }
-        leftSection={
-          node.icon ? (
-            <span style={{ fontSize: 16 }}>{node.icon}</span>
+        className={cx(classes.navItem, isActive && classes.navItemActive)}
+        style={{ paddingLeft: level * 16 + 10 }}
+      >
+        <span className={classes.navItemIcon}>
+          {node.icon ? (
+            <span style={{ fontSize: 15 }}>{node.icon}</span>
           ) : (
-            <IconFile size={16} stroke={1.5} />
-          )
-        }
-        style={{ paddingLeft: level * 12 + 12 }}
-        variant="light"
-      />
+            <IconFileText size={16} stroke={1.5} />
+          )}
+        </span>
+
+        <span className={classes.navItemLabel}>
+          {node.title || "Untitled"}
+        </span>
+
+        {hasChildren && (
+          <span
+            className={cx(
+              classes.navChevron,
+              opened && classes.navChevronOpen,
+            )}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setOpened((o) => !o);
+            }}
+            role="button"
+          >
+            <IconChevronRight size={12} stroke={2} />
+          </span>
+        )}
+      </Link>
+
       {hasChildren && opened && (
-        <div>
+        <div className={classes.navChildren}>
           {node.children.map((child) => (
             <NavTreeItem
               key={child.id}
@@ -120,8 +103,12 @@ export default function DocsNavTree({ tree, spaceSlug }: DocsNavTreeProps) {
   const activeSlugId = extractSlugId(pageSlug);
 
   return (
-    <ScrollArea style={{ height: "calc(100vh - 70px)" }} scrollbarSize={5}>
-      <div style={{ paddingBottom: 40 }}>
+    <ScrollArea
+      style={{ height: "calc(100vh - 72px)" }}
+      scrollbarSize={4}
+      type="hover"
+    >
+      <div className={classes.navSection}>
         {tree.map((node) => (
           <NavTreeItem
             key={node.id}
