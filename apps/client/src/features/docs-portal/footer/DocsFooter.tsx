@@ -11,6 +11,8 @@ interface DocsFooterProps {
   pageId: string;
   flat: ITreeNode[];
   portalSettings: IPortalSettings;
+  showPagination?: boolean;
+  showFooterLinks?: boolean;
 }
 
 export default function DocsFooter({
@@ -18,6 +20,8 @@ export default function DocsFooter({
   pageId,
   flat,
   portalSettings,
+  showPagination = true,
+  showFooterLinks = true,
 }: DocsFooterProps) {
   const currentIndex = flat.findIndex((p) => p.id === pageId);
   const prevPage = currentIndex > 0 ? flat[currentIndex - 1] : null;
@@ -28,9 +32,16 @@ export default function DocsFooter({
 
   return (
     <div>
-      <FeedbackWidget pageId={pageId} />
+      {portalSettings.pageRatingsEnabled && (
+        <FeedbackWidget pageId={pageId} />
+      )}
 
-      {(prevPage || nextPage) && (
+      {/* If page ratings not enabled, still show feedback if it was part of default */}
+      {!portalSettings.pageRatingsEnabled && portalSettings.pageRatingsEnabled === undefined && (
+        <FeedbackWidget pageId={pageId} />
+      )}
+
+      {showPagination && (prevPage || nextPage) && (
         <div className={classes.pageNavigation}>
           {prevPage ? (
             <Link
@@ -67,13 +78,13 @@ export default function DocsFooter({
         </div>
       )}
 
-      {portalSettings.footerLinks && portalSettings.footerLinks.length > 0 && (
+      {showFooterLinks && portalSettings.footerLinks && portalSettings.footerLinks.length > 0 && (
         <div className={classes.footerLinks}>
           {portalSettings.footerLinks.map((link, i) => (
             <a
               key={i}
               href={link.url}
-              target="_blank"
+              target={portalSettings.externalLinksTarget === "new_tab" ? "_blank" : "_self"}
               rel="noopener noreferrer"
               className={classes.footerLink}
             >

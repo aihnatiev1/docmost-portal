@@ -9,6 +9,7 @@ export interface IDocSpace {
 
 export interface IPortalSettings {
   logo?: string;
+  logoDark?: string;
   favicon?: string;
   title?: string;
   description?: string;
@@ -17,12 +18,35 @@ export interface IPortalSettings {
     accentColor?: string;
     fontFamily?: string;
     codeFontFamily?: string;
+    preset?: "clean" | "muted" | "bold" | "gradient";
+    tintStyle?: "none" | "subtle" | "bold";
+    cornerStyle?: "rounded" | "sharp";
+    sidebarBackground?: "default" | "filled";
+    sidebarListStyle?: "default" | "pill" | "line";
   };
+  // Layout settings
+  headerEnabled?: boolean;
+  searchBarStyle?: "default" | "subtle";
+  announcementEnabled?: boolean;
+  announcementText?: string;
+  announcementUrl?: string;
+  paginationEnabled?: boolean;
+  footerEnabled?: boolean;
+  // Configure settings
+  primaryLink?: string;
+  externalLinksTarget?: "same_tab" | "new_tab";
+  pageRatingsEnabled?: boolean;
+  privacyPolicyUrl?: string;
+  // Navigation items
+  navigationItems?: Array<{ label: string; url: string; type: "link" | "menu" }>;
+  // Existing fields
   customDomain?: string;
   analyticsId?: string;
   customCss?: string;
   footerLinks?: Array<{ label: string; url: string }>;
   locales?: string[];
+  // Sharing
+  socialPreviewImage?: string;
 }
 
 export interface IDocTreeItem {

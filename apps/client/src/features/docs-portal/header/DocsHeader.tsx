@@ -30,6 +30,10 @@ export default function DocsHeader({
     typeof navigator !== "undefined" &&
     /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 
+  const navItems = portalSettings.navigationItems || [];
+  const primaryLink = portalSettings.primaryLink || undefined;
+  const isSubtle = portalSettings.searchBarStyle === "subtle";
+
   return (
     <div className={classes.headerInner}>
       <div className={classes.headerBrand}>
@@ -43,20 +47,68 @@ export default function DocsHeader({
           <IconMenu2 size={18} stroke={1.5} />
         </ActionIcon>
 
-        {portalSettings.logo && (
-          <img
-            src={portalSettings.logo}
-            alt=""
-            className={classes.brandLogo}
-          />
+        {primaryLink ? (
+          <a href={primaryLink} style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", color: "inherit" }}>
+            {portalSettings.logo && (
+              <img
+                src={portalSettings.logo}
+                alt=""
+                className={classes.brandLogo}
+              />
+            )}
+            <span className={classes.brandTitle}>
+              {portalSettings.title || "Documentation"}
+            </span>
+          </a>
+        ) : (
+          <>
+            {portalSettings.logo && (
+              <img
+                src={portalSettings.logo}
+                alt=""
+                className={classes.brandLogo}
+              />
+            )}
+            <span className={classes.brandTitle}>
+              {portalSettings.title || "Documentation"}
+            </span>
+          </>
         )}
-
-        <span className={classes.brandTitle}>
-          {portalSettings.title || "Documentation"}
-        </span>
       </div>
 
       <div className={classes.headerActions}>
+        {/* Header navigation items */}
+        {navItems.length > 0 && (
+          <nav style={{ display: "flex", gap: 4, alignItems: "center", marginRight: 8 }}>
+            {navItems.map((item, i) => (
+              <a
+                key={i}
+                href={item.url}
+                target={portalSettings.externalLinksTarget === "new_tab" ? "_blank" : "_self"}
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "var(--mantine-color-text)",
+                  textDecoration: "none",
+                  padding: "4px 10px",
+                  borderRadius: "var(--docs-radius-sm, 4px)",
+                  transition: "background 0.15s",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "var(--mantine-color-default-hover)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent";
+                }}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        )}
+
         {/* Desktop search trigger — GitBook style */}
         <div
           className={classes.searchTrigger}
@@ -64,9 +116,12 @@ export default function DocsHeader({
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === "Enter" && onSearchOpen()}
+          style={isSubtle ? { background: "transparent", border: "1px solid transparent" } : undefined}
         >
           <IconSearch size={15} stroke={1.5} />
-          <span className={classes.searchTriggerText}>Search docs…</span>
+          <span className={classes.searchTriggerText}>
+            {isSubtle ? "Search…" : "Search docs…"}
+          </span>
           <span className={classes.searchShortcut}>
             {isMac ? "⌘K" : "Ctrl+K"}
           </span>
