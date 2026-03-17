@@ -19,6 +19,7 @@ import {
   ResponsiveSettingsRow,
 } from "@/components/ui/responsive-settings-row.tsx";
 import SpacePublicSharingToggle from "@/ee/security/components/space-public-sharing-toggle.tsx";
+import { PortalSettingsForm } from "@/features/space/components/portal-settings-form.tsx";
 
 interface SpaceDetailsProps {
   spaceId: string;
@@ -93,6 +94,16 @@ export default function SpaceDetails({ spaceId, readOnly }: SpaceDetailsProps) {
             <>
               <Divider my="lg" />
               <SpacePublicSharingToggle space={space} />
+            </>
+          )}
+
+          {space.type === "documentation" && !readOnly && (
+            <>
+              <Divider my="lg" />
+              <PortalSettingsForm
+                spaceId={space.id}
+                portalSettings={space.portalSettings || {}}
+              />
             </>
           )}
 

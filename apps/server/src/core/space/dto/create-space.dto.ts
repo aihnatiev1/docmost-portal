@@ -1,5 +1,7 @@
 import {
   IsAlphanumeric,
+  IsIn,
+  IsObject,
   IsOptional,
   IsString,
   MaxLength,
@@ -22,4 +24,12 @@ export class CreateSpaceDto {
   @MaxLength(100)
   @IsAlphanumeric()
   slug: string;
+
+  @IsOptional()
+  @IsIn(['default', 'documentation'])
+  type?: string;
+
+  @IsOptional()
+  @IsObject()
+  portalSettings?: Record<string, any>;
 }

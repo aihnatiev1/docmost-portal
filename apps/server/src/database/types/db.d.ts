@@ -230,6 +230,24 @@ export interface PageHistory {
   workspaceId: string;
 }
 
+export interface PageFeedback {
+  id: Generated<string>;
+  pageId: string | null;
+  isHelpful: boolean;
+  comment: string | null;
+  ipHash: string | null;
+  createdAt: Generated<Timestamp>;
+}
+
+export interface PageViews {
+  id: Generated<string>;
+  pageId: string | null;
+  spaceId: string | null;
+  referrer: string | null;
+  userAgentHash: string | null;
+  createdAt: Generated<Timestamp>;
+}
+
 export interface Pages {
   content: Json | null;
   contributorIds: Generated<string[] | null>;
@@ -240,10 +258,13 @@ export interface Pages {
   deletedById: string | null;
   icon: string | null;
   id: Generated<string>;
+  isDraft: Generated<boolean>;
   isLocked: Generated<boolean>;
   lastUpdatedById: string | null;
+  metaDescription: string | null;
   parentPageId: string | null;
   position: string | null;
+  publishAt: Timestamp | null;
   slugId: string;
   spaceId: string;
   textContent: string | null;
@@ -280,6 +301,13 @@ export interface SpaceMembers {
   userId: string | null;
 }
 
+export interface SpaceTranslations {
+  id: Generated<string>;
+  sourceSpaceId: string;
+  targetSpaceId: string;
+  locale: string;
+}
+
 export interface Spaces {
   createdAt: Generated<Timestamp>;
   creatorId: string | null;
@@ -289,8 +317,10 @@ export interface Spaces {
   id: Generated<string>;
   logo: string | null;
   name: string | null;
+  portalSettings: Generated<Json | null>;
   settings: Json | null;
   slug: string;
+  type: Generated<string>;
   updatedAt: Generated<Timestamp>;
   visibility: Generated<string>;
   workspaceId: string;
@@ -443,11 +473,14 @@ export interface DB {
   groupUsers: GroupUsers;
   notifications: Notifications;
   pageAccess: PageAccess;
+  pageFeedback: PageFeedback;
   pagePermissions: PagePermissions;
   pageHistory: PageHistory;
   pages: Pages;
+  pageViews: PageViews;
   shares: Shares;
   spaceMembers: SpaceMembers;
+  spaceTranslations: SpaceTranslations;
   spaces: Spaces;
   userMfa: UserMfa;
   users: Users;

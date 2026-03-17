@@ -39,6 +39,7 @@ import WorkspaceApiKeys from "@/ee/api-key/pages/workspace-api-keys";
 import AiSettings from "@/ee/ai/pages/ai-settings.tsx";
 import AuditLogs from "@/ee/audit/pages/audit-logs.tsx";
 import VerifyEmail from "@/ee/pages/verify-email.tsx";
+import DocsPortalLayout from "@/features/docs-portal/layout/DocsPortalLayout";
 
 export default function App() {
   const { t } = useTranslation();
@@ -78,6 +79,17 @@ export default function App() {
 
         <Route path={"/share/:shareId"} element={<ShareRedirect />} />
         <Route path={"/p/:pageSlug"} element={<PageRedirect />} />
+
+        {/* Documentation Portal - public routes */}
+        <Route path={"/docs/:spaceSlug"} element={<DocsPortalLayout />} />
+        <Route
+          path={"/docs/:spaceSlug/:pageSlug"}
+          element={<DocsPortalLayout />}
+        />
+        <Route
+          path={"/:locale/docs/:spaceSlug/:pageSlug"}
+          element={<DocsPortalLayout />}
+        />
 
         <Route element={<Layout />}>
           <Route path={"/home"} element={<Home />} />

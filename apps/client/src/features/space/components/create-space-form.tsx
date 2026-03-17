@@ -1,4 +1,4 @@
-import { Group, Box, Button, TextInput, Stack, Textarea } from "@mantine/core";
+import { Group, Box, Button, TextInput, Stack, Textarea, Select } from "@mantine/core";
 import React, { useEffect } from "react";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
@@ -21,6 +21,7 @@ const formSchema = z.object({
       "Space slug must be alphanumeric. No special characters",
     ),
   description: z.string().max(500),
+  type: z.enum(["default", "documentation"]),
 });
 type FormValues = z.infer<typeof formSchema>;
 
@@ -36,6 +37,7 @@ export function CreateSpaceForm() {
       name: "",
       slug: "",
       description: "",
+      type: "default" as "default" | "documentation",
     },
   });
 
@@ -58,11 +60,13 @@ export function CreateSpaceForm() {
     name?: string;
     slug?: string;
     description?: string;
+    type?: string;
   }) => {
     const spaceData = {
       name: data.name,
       slug: data.slug,
       description: data.description,
+      type: data.type,
     };
 
     const createdSpace = await createSpaceMutation.mutateAsync(spaceData);
@@ -90,6 +94,17 @@ export function CreateSpaceForm() {
               placeholder={t("e.g product")}
               variant="filled"
               {...form.getInputProps("slug")}
+            />
+
+            <Select
+              id="type"
+              label={t("Space type")}
+              data={[
+                { value: "default", label: t("Default") },
+                { value: "documentation", label: t("Documentation Portal") },
+              ]}
+              variant="filled"
+              {...form.getInputProps("type")}
             />
 
             <Textarea

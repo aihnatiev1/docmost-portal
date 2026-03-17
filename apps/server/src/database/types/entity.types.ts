@@ -5,9 +5,12 @@ import {
   Groups,
   Notifications,
   PageAccess as _PageAccess,
+  PageFeedback as _PageFeedback,
   PagePermissions as _PagePermissions,
+  PageViews as _PageViews,
   Pages,
   Spaces,
+  SpaceTranslations as _SpaceTranslations,
   Users,
   Workspaces,
   PageHistory as History,
@@ -161,3 +164,15 @@ export type UpdatablePagePermission = Updateable<Omit<_PagePermissions, 'id'>>;
 export type Audit = Selectable<_Audit>;
 export type InsertableAudit = Insertable<_Audit>;
 export type UpdatableAudit = Updateable<Omit<_Audit, 'id'>>;
+
+// Page Feedback
+export type PageFeedbackEntity = Selectable<_PageFeedback>;
+export type InsertablePageFeedback = Insertable<_PageFeedback>;
+
+// Page Views
+export type PageViewEntity = Selectable<_PageViews>;
+export type InsertablePageView = Insertable<_PageViews>;
+
+// Space Translations
+export type SpaceTranslation = Selectable<_SpaceTranslations>;
+export type InsertableSpaceTranslation = Insertable<_SpaceTranslations>;

@@ -111,6 +111,10 @@ export class SpaceService {
         creatorId: userId,
         workspaceId: workspaceId,
         slug: createSpaceDto.slug,
+        ...(createSpaceDto.type && { type: createSpaceDto.type }),
+        ...(createSpaceDto.portalSettings && {
+          portalSettings: JSON.stringify(createSpaceDto.portalSettings),
+        }),
       },
       trx,
     );
@@ -184,6 +188,10 @@ export class SpaceService {
           name: updateSpaceDto.name,
           description: updateSpaceDto.description,
           slug: updateSpaceDto.slug,
+          ...(updateSpaceDto.type && { type: updateSpaceDto.type }),
+          ...(updateSpaceDto.portalSettings !== undefined && {
+            portalSettings: JSON.stringify(updateSpaceDto.portalSettings),
+          }),
         },
         updateSpaceDto.spaceId,
         workspaceId,

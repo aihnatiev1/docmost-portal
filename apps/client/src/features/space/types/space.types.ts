@@ -13,6 +13,24 @@ export interface ISpaceSettings {
   sharing?: ISpaceSharingSettings;
 }
 
+export interface IPortalSettings {
+  logo?: string;
+  favicon?: string;
+  title?: string;
+  description?: string;
+  theme?: {
+    primaryColor?: string;
+    accentColor?: string;
+    fontFamily?: string;
+    codeFontFamily?: string;
+  };
+  customDomain?: string;
+  analyticsId?: string;
+  customCss?: string;
+  footerLinks?: Array<{ label: string; url: string }>;
+  locales?: string[];
+}
+
 export interface ISpace {
   id: string;
   name: string;
@@ -27,6 +45,8 @@ export interface ISpace {
   spaceId?: string;
   membership?: IMembership;
   settings?: ISpaceSettings;
+  type?: string;
+  portalSettings?: IPortalSettings;
   // for updates
   disablePublicSharing?: boolean;
 }
