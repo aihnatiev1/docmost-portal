@@ -272,6 +272,13 @@ export function SpaceSidebar() {
                 SpaceCaslAction.Manage,
                 SpaceCaslSubject.Page,
               )}
+              sidebarInserts={(() => {
+                const raw = space?.portalSettings;
+                const ps = typeof raw === 'string'
+                  ? (() => { try { return JSON.parse(raw); } catch { return {}; } })()
+                  : raw || {};
+                return ps.sidebarInserts;
+              })()}
             />
           </div>
         </div>

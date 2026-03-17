@@ -9,4 +9,7 @@ export type SpaceTreeNode = {
   hasChildren: boolean;
   canEdit?: boolean;
   children: SpaceTreeNode[];
+  // Sidebar insert fields (for header/link items)
+  _insertType?: "header" | "link";
+  _insertUrl?: string;
 };

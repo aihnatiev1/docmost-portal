@@ -13,7 +13,7 @@ import {
   usePageQuery,
   useUpdatePageMutation,
 } from "@/features/page/queries/page-query.ts";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import classes from "@/features/page/tree/styles/tree.module.css";
 import { ActionIcon, Box, Menu, rem, Text } from "@mantine/core";
@@ -23,6 +23,7 @@ import {
   IconChevronRight,
   IconCopy,
   IconDotsVertical,
+  IconExternalLink,
   IconFileDescription,
   IconFileExport,
   IconLink,
@@ -70,14 +71,22 @@ import { useToggleSidebar } from "@/components/layouts/global/hooks/hooks/use-to
 import CopyPageModal from "../../components/copy-page-modal.tsx";
 import { duplicatePage } from "../../services/page-service.ts";
 
+interface SidebarInsert {
+  type: "header" | "link";
+  label: string;
+  url?: string;
+  position: number;
+}
+
 interface SpaceTreeProps {
   spaceId: string;
   readOnly: boolean;
+  sidebarInserts?: SidebarInsert[];
 }
 
 const openTreeNodesAtom = atom<OpenMap>({});
 
-export default function SpaceTree({ spaceId, readOnly }: SpaceTreeProps) {
+export default function SpaceTree({ spaceId, readOnly, sidebarInserts }: SpaceTreeProps) {
   const { t } = useTranslation();
   const { pageSlug } = useParams();
   const { data, setData, controllers } =
@@ -230,29 +239,95 @@ export default function SpaceTree({ spaceId, readOnly }: SpaceTreeProps) {
 
   const filteredData = data.filter((node) => node?.spaceId === spaceId);
 
+  // Inject sidebar inserts (headers & links) into the tree data at the right positions
+  const dataWithInserts = React.useMemo(() => {
+    if (!sidebarInserts || sidebarInserts.length === 0) return filteredData;
+
+    const insertsByPos: Record<number, SidebarInsert[]> = {};
+    for (const ins of sidebarInserts) {
+      if (!insertsByPos[ins.position]) insertsByPos[ins.position] = [];
+      insertsByPos[ins.position].push(ins);
+    }
+
+    const result: SpaceTreeNode[] = [];
+
+    filteredData.forEach((node, idx) => {
+      // Add inserts before this position
+      if (insertsByPos[idx]) {
+        for (const ins of insertsByPos[idx]) {
+          result.push({
+            id: `_insert_${ins.type}_${idx}_${ins.label}`,
+            slugId: "",
+            name: ins.label,
+            position: "",
+            spaceId: spaceId,
+            parentPageId: null,
+            hasChildren: false,
+            canEdit: false,
+            children: [],
+            _insertType: ins.type,
+            _insertUrl: ins.url,
+          });
+        }
+      }
+      result.push(node);
+    });
+
+    // Add inserts after the last page
+    const afterEnd = Object.entries(insertsByPos)
+      .filter(([pos]) => Number(pos) >= filteredData.length)
+      .sort(([a], [b]) => Number(a) - Number(b));
+
+    for (const [, inserts] of afterEnd) {
+      for (const ins of inserts) {
+        result.push({
+          id: `_insert_${ins.type}_end_${ins.label}`,
+          slugId: "",
+          name: ins.label,
+          position: "",
+          spaceId: spaceId,
+          parentPageId: null,
+          hasChildren: false,
+          canEdit: false,
+          children: [],
+          _insertType: ins.type,
+          _insertUrl: ins.url,
+        });
+      }
+    }
+
+    return result;
+  }, [filteredData, sidebarInserts, spaceId]);
+
   return (
     <div ref={mergedRef} className={classes.treeContainer}>
-      {isDataLoaded && filteredData.length === 0 && (
+      {isDataLoaded && dataWithInserts.length === 0 && (
         <Text size="xs" c="dimmed" py="xs" px="sm">
           {t("No pages yet")}
         </Text>
       )}
       {isRootReady && rootElement.current && (
         <Tree
-          data={filteredData}
+          data={dataWithInserts}
           disableDrag={
             readOnly
               ? true
               : (data) => {
-                  return data.canEdit === false;
+                  return data.canEdit === false || !!data._insertType;
                 }
           }
           disableDrop={
             readOnly
               ? true
-              : ({ parentNode }) => parentNode?.data?.canEdit === false
+              : ({ parentNode }) =>
+                  parentNode?.data?.canEdit === false ||
+                  !!parentNode?.data?._insertType
           }
-          disableEdit={readOnly ? true : (data) => data.canEdit === false}
+          disableEdit={
+            readOnly
+              ? true
+              : (data) => data.canEdit === false || !!data._insertType
+          }
           {...controllers}
           width={width}
           height={rootElement.current.clientHeight}
@@ -284,6 +359,38 @@ export default function SpaceTree({ spaceId, readOnly }: SpaceTreeProps) {
 
 function Node({ node, style, dragHandle, tree }: NodeRendererProps<any>) {
   const { t } = useTranslation();
+
+  // Render sidebar insert items (headers and external links)
+  if (node.data._insertType === "header") {
+    return (
+      <div style={style} className={classes.insertHeader}>
+        {node.data.name}
+      </div>
+    );
+  }
+
+  if (node.data._insertType === "link") {
+    return (
+      <a
+        href={node.data._insertUrl || "#"}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ ...style, textDecoration: "none" }}
+        className={classes.insertLink}
+      >
+        <span className={classes.insertLinkIcon}>
+          <IconExternalLink size={18} stroke={1.5} />
+        </span>
+        <span className={classes.insertLinkLabel}>{node.data.name}</span>
+        <span className={classes.insertLinkArrow}>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M1 9L9 1M9 1H3M9 1V7" />
+          </svg>
+        </span>
+      </a>
+    );
+  }
+
   const updatePageMutation = useUpdatePageMutation();
   const [treeData, setTreeData] = useAtom(treeDataAtom);
   const [, appendChildren] = useAtom(appendNodeChildrenAtom);

@@ -108,3 +108,65 @@
 [role="treeitem"] {
     padding-bottom: 2px;
 }
+
+/* Sidebar insert: group header */
+.insertHeader {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 93%;
+    padding-left: 8px;
+    font-size: rem(11px);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-3));
+    user-select: none;
+    cursor: default;
+    margin-top: 4px;
+}
+
+/* Sidebar insert: external link */
+.insertLink {
+    position: relative;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 93%;
+    text-decoration: none;
+    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+    cursor: pointer;
+
+    &:hover {
+        background-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
+    }
+}
+
+.insertLinkIcon {
+    display: flex;
+    align-items: center;
+    margin-left: 28px;
+    margin-right: 4px;
+    color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-3));
+}
+
+.insertLinkLabel {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: rem(14px);
+    font-weight: 500;
+}
+
+.insertLinkArrow {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+    opacity: 0.4;
+    transition: opacity 0.15s;
+}
+
+.insertLink:hover .insertLinkArrow {
+    opacity: 0.8;
+}
