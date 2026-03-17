@@ -70,7 +70,7 @@ import { mobileSidebarAtom } from "@/components/layouts/global/hooks/atoms/sideb
 import { useToggleSidebar } from "@/components/layouts/global/hooks/hooks/use-toggle-sidebar.ts";
 import CopyPageModal from "../../components/copy-page-modal.tsx";
 import { duplicatePage } from "../../services/page-service.ts";
-import { getDeleteInsertFn, SidebarInsert } from "@/features/page/tree/atoms/sidebar-insert-atoms.ts";
+import { getDeleteInsertFn, getMoveInsertFn, SidebarInsert } from "@/features/page/tree/atoms/sidebar-insert-atoms.ts";
 
 interface SpaceTreeProps {
   spaceId: string;
@@ -309,15 +309,23 @@ export default function SpaceTree({ spaceId, readOnly, sidebarInserts }: SpaceTr
             readOnly
               ? true
               : (data) => {
-                  return data.canEdit === false || !!data._insertType;
+                  return data.canEdit === false;
                 }
           }
           disableDrop={
             readOnly
               ? true
-              : ({ parentNode }) =>
-                  parentNode?.data?.canEdit === false ||
-                  !!parentNode?.data?._insertType
+              : ({ parentNode, dragNodes }) => {
+                  const parentData = parentNode?.data;
+                  const dragData = dragNodes?.[0]?.data;
+                  // Can't drop into non-editable parent
+                  if (parentData?.canEdit === false) return true;
+                  // Can't drop into insert header (headers have no children)
+                  if (parentData?._insertType) return true;
+                  // Inserts can only live at root level
+                  if (dragData?._insertType && parentNode?.id !== "__REACT_ARBORIST_INTERNAL_ROOT__") return true;
+                  return false;
+                }
           }
           disableEdit={
             readOnly
@@ -358,72 +366,36 @@ function Node({ node, style, dragHandle, tree }: NodeRendererProps<any>) {
 
   // Render sidebar insert items (headers and external links)
   if (node.data._insertType === "header") {
-    const deleteFn = getDeleteInsertFn();
     return (
-      <div style={style} className={classes.insertHeader}>
+      <div style={style} className={classes.insertHeader} ref={dragHandle}>
         <span style={{ flex: 1 }}>{node.data.name}</span>
-        {deleteFn && (
-          <ActionIcon
-            variant="transparent"
-            size={16}
-            c="gray"
-            className={classes.insertDeleteBtn}
-            onClick={(e) => {
-              e.stopPropagation();
-              deleteFn({
-                type: "header",
-                label: node.data.name,
-                position: node.data._insertPosition ?? 0,
-              });
-            }}
-          >
-            <IconTrash size={12} />
-          </ActionIcon>
-        )}
+        <div className={classes.actions}>
+          <InsertMenu node={node} />
+        </div>
       </div>
     );
   }
 
   if (node.data._insertType === "link") {
-    const deleteFn = getDeleteInsertFn();
     return (
-      <a
-        href={node.data._insertUrl || "#"}
-        target="_blank"
-        rel="noopener noreferrer"
+      <div
         style={{ ...style, textDecoration: "none" }}
         className={classes.insertLink}
+        ref={dragHandle}
       >
         <span className={classes.insertLinkIcon}>
           <IconExternalLink size={18} stroke={1.5} />
         </span>
         <span className={classes.insertLinkLabel}>{node.data.name}</span>
-        {deleteFn && (
-          <ActionIcon
-            variant="transparent"
-            size={16}
-            c="gray"
-            className={classes.insertDeleteBtn}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              deleteFn({
-                type: "link",
-                label: node.data.name,
-                url: node.data._insertUrl,
-                position: node.data._insertPosition ?? 0,
-              });
-            }}
-          >
-            <IconTrash size={12} />
-          </ActionIcon>
-        )}
         <span className={classes.insertLinkArrow}>
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M1 9L9 1M9 1H3M9 1V7" />
           </svg>
         </span>
-      </a>
+        <div className={classes.actions}>
+          <InsertMenu node={node} />
+        </div>
+      </div>
     );
   }
 
@@ -837,6 +809,72 @@ function NodeMenu({ node, treeApi, spaceId }: NodeMenuProps) {
         onClose={closeExportModal}
       />
     </>
+  );
+}
+
+/** "..." menu for sidebar inserts (groups & links) — consistent with page NodeMenu */
+function InsertMenu({ node }: { node: NodeApi<SpaceTreeNode> }) {
+  const { t } = useTranslation();
+  const deleteFn = getDeleteInsertFn();
+
+  const handleDelete = () => {
+    if (!deleteFn) return;
+    deleteFn({
+      type: node.data._insertType as "header" | "link",
+      label: node.data.name,
+      url: node.data._insertUrl,
+      position: node.data._insertPosition ?? 0,
+    });
+  };
+
+  const handleOpenLink = () => {
+    if (node.data._insertUrl) {
+      window.open(node.data._insertUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  return (
+    <Menu shadow="md" width={180}>
+      <Menu.Target>
+        <ActionIcon
+          variant="transparent"
+          c="gray"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <IconDotsVertical style={{ width: rem(20), height: rem(20) }} stroke={2} />
+        </ActionIcon>
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        {node.data._insertType === "link" && node.data._insertUrl && (
+          <Menu.Item
+            leftSection={<IconExternalLink size={16} />}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleOpenLink();
+            }}
+          >
+            {t("Open link")}
+          </Menu.Item>
+        )}
+
+        <Menu.Item
+          c="red"
+          leftSection={<IconTrash size={16} />}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDelete();
+          }}
+        >
+          {t("Delete")}
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
   );
 }
 

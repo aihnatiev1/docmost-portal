@@ -23,6 +23,7 @@ import { SpaceTreeNode } from "@/features/page/tree/types.ts";
 import { buildPageUrl } from "@/features/page/page.utils.ts";
 import { getSpaceUrl } from "@/lib/config.ts";
 import { useQueryEmit } from "@/features/websocket/use-query-emit.ts";
+import { getMoveInsertFn } from "@/features/page/tree/atoms/sidebar-insert-atoms.ts";
 
 export function useTreeMutation<T>(spaceId: string) {
   const [data, setData] = useAtom(treeDataAtom);
@@ -102,6 +103,40 @@ export function useTreeMutation<T>(spaceId: string) {
     index: number;
   }) => {
     const draggedNodeId = args.dragIds[0];
+    const draggedData = (args.dragNodes[0] as any).data as SpaceTreeNode;
+
+    // Handle sidebar insert moves (groups/links) — update portalSettings position
+    if (draggedData._insertType) {
+      const moveInsertFn = getMoveInsertFn();
+      if (!moveInsertFn) return;
+
+      // Calculate new position: count how many real (non-insert) nodes come before this index
+      const rootData = tree.data;
+      let realPageIndex = 0;
+      for (let i = 0; i < args.index; i++) {
+        if (rootData[i] && !rootData[i]._insertType) {
+          realPageIndex++;
+        }
+      }
+
+      tree.move({
+        id: draggedNodeId,
+        parentId: null,
+        index: args.index,
+      });
+      setData(tree.data);
+
+      await moveInsertFn(
+        {
+          type: draggedData._insertType,
+          label: draggedData.name,
+          url: draggedData._insertUrl,
+          position: draggedData._insertPosition ?? 0,
+        },
+        realPageIndex,
+      );
+      return;
+    }
 
     tree.move({
       id: draggedNodeId,

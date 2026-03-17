@@ -28,7 +28,7 @@ import classes from "./space-sidebar.module.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { treeApiAtom } from "@/features/page/tree/atoms/tree-api-atom.ts";
-import { setDeleteInsertFn, SidebarInsert } from "@/features/page/tree/atoms/sidebar-insert-atoms.ts";
+import { setDeleteInsertFn, setMoveInsertFn, SidebarInsert } from "@/features/page/tree/atoms/sidebar-insert-atoms.ts";
 import { Link, useLocation, useParams } from "react-router-dom";
 import clsx from "clsx";
 import { useDisclosure } from "@mantine/hooks";
@@ -95,7 +95,26 @@ export function SpaceSidebar() {
         portalSettings: { ...portalSettings, sidebarInserts: updated },
       });
     });
-    return () => setDeleteInsertFn(null);
+
+    setMoveInsertFn(async (insert: SidebarInsert, newPosition: number) => {
+      const portalSettings = getPortalSettings();
+      const existing: SidebarInsert[] = portalSettings.sidebarInserts || [];
+      const updated = existing.map((ins) => {
+        if (ins.type === insert.type && ins.label === insert.label && ins.position === insert.position) {
+          return { ...ins, position: newPosition };
+        }
+        return ins;
+      });
+      await updateSpaceMutation.mutateAsync({
+        spaceId: space.id,
+        portalSettings: { ...portalSettings, sidebarInserts: updated },
+      });
+    });
+
+    return () => {
+      setDeleteInsertFn(null);
+      setMoveInsertFn(null);
+    };
   }, [space?.id, space?.portalSettings]);
 
   if (!space) {
