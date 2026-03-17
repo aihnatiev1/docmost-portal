@@ -33,11 +33,10 @@ export default function SpaceSettingsModal({
       <Modal.Root
         opened={opened}
         onClose={onClose}
-        size={600}
+        size={860}
         padding="xl"
-        yOffset="10vh"
+        yOffset="5vh"
         xOffset={0}
-        mah={400}
       >
         <Modal.Overlay />
         <Modal.Content style={{ overflow: "hidden" }}>
@@ -50,7 +49,7 @@ export default function SpaceSettingsModal({
             <Modal.CloseButton />
           </Modal.Header>
           <Modal.Body>
-            <div style={{ height: rem(600) }}>
+            <div style={{ height: rem(720) }}>
               <Tabs color="dark" defaultValue="members">
                 <Tabs.List>
                   <Tabs.Tab fw={500} value="general">
@@ -62,7 +61,7 @@ export default function SpaceSettingsModal({
                 </Tabs.List>
 
                 <Tabs.Panel value="general">
-                  <ScrollArea h={580} scrollbarSize={5} pr={8}>
+                  <ScrollArea h={700} scrollbarSize={5} pr={8}>
                     <div style={{ paddingBottom: "100px" }}>
                       <SpaceDetails
                         spaceId={space?.id}
