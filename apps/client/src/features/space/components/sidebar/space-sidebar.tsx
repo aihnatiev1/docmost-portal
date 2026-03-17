@@ -371,7 +371,7 @@ export function SpaceSidebar() {
             description={t("Insert before root page at this index (0 = top of sidebar)")}
             type="number"
             value={String(insertPosition)}
-            onChange={(e) => setInsertPosition(parseInt(e.currentTarget.value) || 0)}
+            onChange={(e) => setInsertPosition(Math.max(0, parseInt(e.currentTarget.value) || 0))}
           />
 
           <Group justify="flex-end">

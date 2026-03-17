@@ -110,20 +110,23 @@ export function useTreeMutation<T>(spaceId: string) {
       const moveInsertFn = getMoveInsertFn();
       if (!moveInsertFn) return;
 
-      // Calculate new position: count how many real (non-insert) nodes come before this index
-      const rootData = tree.data;
+      // Calculate new position: count how many real page nodes come before this index
+      // We use the tree props data (which includes inserts) via the parent node's children
+      const rootChildren = args.parentNode
+        ? (args.parentNode as any).children || []
+        : (tree as any).props?.data || tree.data;
+
       let realPageIndex = 0;
       for (let i = 0; i < args.index; i++) {
-        if (rootData[i] && !rootData[i]._insertType) {
+        const item = rootChildren[i];
+        const itemData = item?.data || item;
+        // Count only real pages (not insert nodes)
+        if (itemData && !itemData._insertType && !String(itemData.id || "").startsWith("_insert_")) {
           realPageIndex++;
         }
       }
 
-      tree.move({
-        id: draggedNodeId,
-        parentId: null,
-        index: args.index,
-      });
+      // Don't move in SimpleTree (inserts are virtual), just update state
       setData(tree.data);
 
       await moveInsertFn(
@@ -270,8 +273,9 @@ export function useTreeMutation<T>(spaceId: string) {
     for (const item of node.children) {
       if (item.data.slugId === pageSlug) {
         return true;
-      } else {
-        return isPageInNode(item, pageSlug);
+      }
+      if (isPageInNode(item, pageSlug)) {
+        return true;
       }
     }
     return false;

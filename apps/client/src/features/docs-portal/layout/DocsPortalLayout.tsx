@@ -32,23 +32,26 @@ function buildThemeCssVars(ps: IPortalSettings): React.CSSProperties {
   const vars: Record<string, string> = {};
   const theme = ps.theme || {};
 
-  // Colors
-  if (theme.primaryColor) {
-    vars["--docs-primary"] = theme.primaryColor;
-    // Generate a lighter tint for backgrounds
-    vars["--docs-primary-light"] = theme.primaryColor + "14";
-    vars["--docs-primary-medium"] = theme.primaryColor + "28";
+  // Colors (sanitized)
+  const pc = sanitizeColor(theme.primaryColor || "");
+  if (pc) {
+    vars["--docs-primary"] = pc;
+    vars["--docs-primary-light"] = pc + "14";
+    vars["--docs-primary-medium"] = pc + "28";
   }
-  if (theme.accentColor) {
-    vars["--docs-accent"] = theme.accentColor;
+  const ac = sanitizeColor(theme.accentColor || "");
+  if (ac) {
+    vars["--docs-accent"] = ac;
   }
 
-  // Fonts
-  if (theme.fontFamily) {
-    vars["--docs-font-family"] = theme.fontFamily;
+  // Fonts (sanitized)
+  const ff = sanitizeFont(theme.fontFamily || "");
+  if (ff) {
+    vars["--docs-font-family"] = ff;
   }
-  if (theme.codeFontFamily) {
-    vars["--docs-code-font-family"] = theme.codeFontFamily;
+  const cff = sanitizeFont(theme.codeFontFamily || "");
+  if (cff) {
+    vars["--docs-code-font-family"] = cff;
   }
 
   // Corner style
@@ -65,6 +68,28 @@ function buildThemeCssVars(ps: IPortalSettings): React.CSSProperties {
   return vars as React.CSSProperties;
 }
 
+/** Sanitize a CSS color value — only allow valid hex colors */
+function sanitizeColor(val: string): string | null {
+  if (!val) return null;
+  const clean = val.trim();
+  if (/^#[0-9a-fA-F]{3,8}$/.test(clean)) return clean;
+  return null;
+}
+
+/** Sanitize a CSS font family — strip dangerous characters */
+function sanitizeFont(val: string): string | null {
+  if (!val) return null;
+  // Remove anything that could break out of CSS context
+  const clean = val.replace(/[{}<>;\\/]/g, "").trim();
+  return clean || null;
+}
+
+/** Sanitize custom CSS — prevent </style> breakout */
+function sanitizeCustomCss(css: string): string {
+  if (!css) return "";
+  return css.replace(/<\/?style[^>]*>/gi, "/* blocked */");
+}
+
 /**
  * Build a <style> block for theme-driven overrides that can't be done via CSS vars alone
  */
@@ -73,70 +98,73 @@ function buildThemeStyles(ps: IPortalSettings): string {
   const parts: string[] = [];
 
   // Primary color applied to links, active nav, accents
-  if (theme.primaryColor) {
+  const safeColor = sanitizeColor(theme.primaryColor || "");
+  if (safeColor) {
     parts.push(`
-      .docs-portal a:not([class]) { color: ${theme.primaryColor}; }
-      .docs-portal .ProseMirror a { color: ${theme.primaryColor} !important; border-bottom-color: ${theme.primaryColor}30 !important; }
-      .docs-portal .ProseMirror a:hover { border-bottom-color: ${theme.primaryColor}80 !important; }
+      .docs-portal a:not([class]) { color: ${safeColor}; }
+      .docs-portal .ProseMirror a { color: ${safeColor} !important; border-bottom-color: ${safeColor}30 !important; }
+      .docs-portal .ProseMirror a:hover { border-bottom-color: ${safeColor}80 !important; }
       .docs-portal .${classes.navItemActive} {
-        background: ${theme.primaryColor}22 !important;
-        color: ${theme.primaryColor} !important;
-        border-left-color: ${theme.primaryColor} !important;
+        background: ${safeColor}22 !important;
+        color: ${safeColor} !important;
+        border-left-color: ${safeColor} !important;
         font-weight: 600 !important;
       }
       .docs-portal .${classes.searchShortcut} {
-        color: ${theme.primaryColor};
+        color: ${safeColor};
       }
       .docs-portal .${classes.pageNavCard}:hover {
-        border-color: ${theme.primaryColor}40;
+        border-color: ${safeColor}40;
       }
       .docs-portal .${classes.navItemActive} .${classes.navItemIcon} {
-        color: ${theme.primaryColor} !important;
+        color: ${safeColor} !important;
       }
     `);
   }
 
   // Font family
-  if (theme.fontFamily) {
+  const safeFont = sanitizeFont(theme.fontFamily || "");
+  if (safeFont) {
     parts.push(`
       .docs-portal, .docs-portal .ProseMirror {
-        font-family: ${theme.fontFamily}, var(--mantine-font-family);
+        font-family: ${safeFont}, var(--mantine-font-family);
       }
     `);
   }
 
   // Code font
-  if (theme.codeFontFamily) {
+  const safeCodeFont = sanitizeFont(theme.codeFontFamily || "");
+  if (safeCodeFont) {
     parts.push(`
       .docs-portal code, .docs-portal pre {
-        font-family: ${theme.codeFontFamily}, ui-monospace, monospace;
+        font-family: ${safeCodeFont}, ui-monospace, monospace;
       }
     `);
   }
 
   // Tint style — adds primary color tint to backgrounds
-  if (theme.tintStyle === "subtle" && theme.primaryColor) {
+  if (theme.tintStyle === "subtle" && safeColor) {
     parts.push(`
       .docs-portal .${classes.navbar} {
-        background: linear-gradient(135deg, ${theme.primaryColor}05, ${theme.primaryColor}0a) !important;
+        background: linear-gradient(135deg, ${safeColor}05, ${safeColor}0a) !important;
       }
     `);
-  } else if (theme.tintStyle === "bold" && theme.primaryColor) {
+  } else if (theme.tintStyle === "bold" && safeColor) {
     parts.push(`
       .docs-portal .${classes.navbar} {
-        background: linear-gradient(180deg, ${theme.primaryColor}12, ${theme.primaryColor}08) !important;
+        background: linear-gradient(180deg, ${safeColor}12, ${safeColor}08) !important;
       }
       .docs-portal .${classes.header} {
-        background: linear-gradient(90deg, ${theme.primaryColor}08, transparent) !important;
+        background: linear-gradient(90deg, ${safeColor}08, transparent) !important;
       }
     `);
   }
 
   // Sidebar background — filled
-  if (theme.sidebarBackground === "filled" && theme.primaryColor) {
+  if (theme.sidebarBackground === "filled" && safeColor) {
     parts.push(`
       .docs-portal .${classes.navbar} {
-        background: ${theme.primaryColor}0a !important;
+        background: ${safeColor}0a !important;
       }
     `);
   }
@@ -151,13 +179,13 @@ function buildThemeStyles(ps: IPortalSettings): string {
         padding-left: 10px !important;
       }
       .docs-portal .${classes.navItem}:hover {
-        background: ${theme.primaryColor ? theme.primaryColor + "10" : "var(--mantine-color-default-hover)"} !important;
+        background: ${safeColor ? safeColor + "10" : "var(--mantine-color-default-hover)"} !important;
       }
       .docs-portal .${classes.navItemActive} {
         border-radius: 8px !important;
         border-left: none !important;
-        background: ${theme.primaryColor ? theme.primaryColor + "20" : "var(--mantine-primary-color-light)"} !important;
-        box-shadow: inset 0 0 0 1px ${theme.primaryColor ? theme.primaryColor + "25" : "var(--mantine-primary-color-light)"};
+        background: ${safeColor ? safeColor + "20" : "var(--mantine-primary-color-light)"} !important;
+        box-shadow: inset 0 0 0 1px ${safeColor ? safeColor + "25" : "var(--mantine-primary-color-light)"};
       }
     `);
   }
@@ -172,7 +200,7 @@ function buildThemeStyles(ps: IPortalSettings): string {
       }
       .docs-portal .${classes.navItemActive} {
         border-radius: 0 !important;
-        border-left: 2px solid ${theme.primaryColor || "var(--mantine-primary-color-filled)"} !important;
+        border-left: 2px solid ${safeColor || "var(--mantine-primary-color-filled)"} !important;
         background: transparent !important;
       }
     `);
@@ -344,7 +372,7 @@ export default function DocsPortalLayout() {
 
       {/* User custom CSS */}
       {portalSettings.customCss && (
-        <style>{portalSettings.customCss}</style>
+        <style>{sanitizeCustomCss(portalSettings.customCss)}</style>
       )}
 
       <div className="docs-portal" style={cssVars}>

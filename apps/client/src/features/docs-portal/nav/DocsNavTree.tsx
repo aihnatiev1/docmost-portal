@@ -115,6 +115,15 @@ function SidebarGroupHeader({ label }: { label: string }) {
   return <div className={classes.navSectionLabel}>{label}</div>;
 }
 
+/** Sanitize URL — block javascript:, data:, vbscript: protocols */
+function sanitizeUrl(url: string): string {
+  const trimmed = url.trim().toLowerCase();
+  if (trimmed.startsWith("javascript:") || trimmed.startsWith("data:") || trimmed.startsWith("vbscript:")) {
+    return "#";
+  }
+  return url;
+}
+
 /** Render a sidebar external link with arrow icon */
 function SidebarExternalLink({
   label,
@@ -127,7 +136,7 @@ function SidebarExternalLink({
 }) {
   return (
     <a
-      href={url}
+      href={sanitizeUrl(url)}
       target={target || "_blank"}
       rel="noopener noreferrer"
       className={classes.navItem}
