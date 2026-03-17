@@ -77,9 +77,10 @@ function buildThemeStyles(ps: IPortalSettings): string {
     parts.push(`
       .docs-portal a:not([class]) { color: ${theme.primaryColor}; }
       .docs-portal .${classes.navItemActive} {
-        background: ${theme.primaryColor}14 !important;
+        background: ${theme.primaryColor}22 !important;
         color: ${theme.primaryColor} !important;
         border-left-color: ${theme.primaryColor} !important;
+        font-weight: 600 !important;
       }
       .docs-portal .${classes.searchShortcut} {
         color: ${theme.primaryColor};
@@ -139,13 +140,19 @@ function buildThemeStyles(ps: IPortalSettings): string {
   if (theme.sidebarListStyle === "pill") {
     parts.push(`
       .docs-portal .${classes.navItem} {
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         margin: 1px 8px !important;
         border-left: none !important;
+        padding-left: 10px !important;
+      }
+      .docs-portal .${classes.navItem}:hover {
+        background: ${theme.primaryColor ? theme.primaryColor + "10" : "var(--mantine-color-default-hover)"} !important;
       }
       .docs-portal .${classes.navItemActive} {
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         border-left: none !important;
+        background: ${theme.primaryColor ? theme.primaryColor + "20" : "var(--mantine-primary-color-light)"} !important;
+        box-shadow: inset 0 0 0 1px ${theme.primaryColor ? theme.primaryColor + "25" : "var(--mantine-primary-color-light)"};
       }
     `);
   }
