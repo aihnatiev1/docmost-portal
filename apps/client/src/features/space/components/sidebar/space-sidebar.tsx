@@ -3,28 +3,36 @@ import {
   Group,
   Menu,
   Text,
+  TextInput,
   Tooltip,
   UnstyledButton,
+  Modal,
+  Button,
+  Stack,
+  Select,
 } from "@mantine/core";
 import {
   IconArrowDown,
   IconDots,
   IconFileExport,
+  IconFileText,
+  IconFolder,
   IconHome,
+  IconLink,
   IconPlus,
   IconSearch,
   IconSettings,
   IconTrash,
 } from "@tabler/icons-react";
 import classes from "./space-sidebar.module.css";
-import React from "react";
+import React, { useState } from "react";
 import { useAtom } from "jotai";
 import { treeApiAtom } from "@/features/page/tree/atoms/tree-api-atom.ts";
 import { Link, useLocation, useParams } from "react-router-dom";
 import clsx from "clsx";
 import { useDisclosure } from "@mantine/hooks";
 import SpaceSettingsModal from "@/features/space/components/settings-modal.tsx";
-import { useGetSpaceBySlugQuery } from "@/features/space/queries/space-query.ts";
+import { useGetSpaceBySlugQuery, useUpdateSpaceMutation } from "@/features/space/queries/space-query.ts";
 import { getSpaceUrl } from "@/lib/config.ts";
 import SpaceTree from "@/features/page/tree/components/space-tree.tsx";
 import { useSpaceAbility } from "@/features/space/permissions/use-space-ability.ts";
@@ -55,12 +63,63 @@ export function SpaceSidebar() {
   const spaceRules = space?.membership?.permissions;
   const spaceAbility = useSpaceAbility(spaceRules);
 
+  // Sidebar insert modal state
+  const [insertModalOpened, { open: openInsertModal, close: closeInsertModal }] =
+    useDisclosure(false);
+  const [insertType, setInsertType] = useState<"header" | "link">("header");
+  const [insertLabel, setInsertLabel] = useState("");
+  const [insertUrl, setInsertUrl] = useState("");
+  const [insertPosition, setInsertPosition] = useState(0);
+  const updateSpaceMutation = useUpdateSpaceMutation();
+
   if (!space) {
     return <></>;
   }
 
   function handleCreatePage() {
     tree?.create({ parentId: null, type: "internal", index: 0 });
+  }
+
+  function openGroupModal() {
+    setInsertType("header");
+    setInsertLabel("");
+    setInsertUrl("");
+    setInsertPosition(0);
+    openInsertModal();
+  }
+
+  function openLinkModal() {
+    setInsertType("link");
+    setInsertLabel("");
+    setInsertUrl("https://");
+    setInsertPosition(0);
+    openInsertModal();
+  }
+
+  async function handleAddInsert() {
+    if (!insertLabel.trim()) return;
+
+    const rawSettings = space?.portalSettings;
+    const portalSettings = typeof rawSettings === 'string'
+      ? (() => { try { return JSON.parse(rawSettings); } catch { return {}; } })()
+      : rawSettings || {};
+
+    const existing = portalSettings.sidebarInserts || [];
+    const newInsert: any = {
+      type: insertType,
+      label: insertLabel.trim(),
+      position: insertPosition,
+    };
+    if (insertType === "link") {
+      newInsert.url = insertUrl.trim();
+    }
+
+    const updated = [...existing, newInsert];
+    await updateSpaceMutation.mutateAsync({
+      spaceId: space.id,
+      portalSettings: { ...portalSettings, sidebarInserts: updated },
+    });
+    closeInsertModal();
   }
 
   return (
@@ -167,16 +226,41 @@ export function SpaceSidebar() {
               <Group gap="xs">
                 <SpaceMenu spaceId={space.id} onSpaceSettings={openSettings} />
 
-                <Tooltip label={t("Create page")} withArrow position="right">
-                  <ActionIcon
-                    variant="default"
-                    size={18}
-                    onClick={handleCreatePage}
-                    aria-label={t("Create page")}
-                  >
-                    <IconPlus />
-                  </ActionIcon>
-                </Tooltip>
+                {/* GitBook-style "+" menu: Page, Group, Link */}
+                <Menu width={180} shadow="md" withArrow position="bottom-end">
+                  <Menu.Target>
+                    <Tooltip label={t("Add to sidebar")} withArrow position="right">
+                      <ActionIcon
+                        variant="default"
+                        size={18}
+                        aria-label={t("Add to sidebar")}
+                      >
+                        <IconPlus />
+                      </ActionIcon>
+                    </Tooltip>
+                  </Menu.Target>
+
+                  <Menu.Dropdown>
+                    <Menu.Item
+                      leftSection={<IconFileText size={16} />}
+                      onClick={handleCreatePage}
+                    >
+                      {t("Page")}
+                    </Menu.Item>
+                    <Menu.Item
+                      leftSection={<IconFolder size={16} />}
+                      onClick={openGroupModal}
+                    >
+                      {t("Group")}
+                    </Menu.Item>
+                    <Menu.Item
+                      leftSection={<IconLink size={16} />}
+                      onClick={openLinkModal}
+                    >
+                      {t("Link to...")}
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
               </Group>
             )}
           </Group>
@@ -198,6 +282,56 @@ export function SpaceSidebar() {
         onClose={closeSettings}
         spaceId={space?.slug}
       />
+
+      {/* Modal for adding Group or Link */}
+      <Modal
+        opened={insertModalOpened}
+        onClose={closeInsertModal}
+        title={insertType === "header" ? t("Add Group") : t("Add Link")}
+        size="sm"
+      >
+        <Stack gap="md">
+          <TextInput
+            label={t("Label")}
+            placeholder={insertType === "header" ? "PROXY-SELLER" : "SDK PHP"}
+            value={insertLabel}
+            onChange={(e) => setInsertLabel(e.currentTarget.value)}
+            autoFocus
+            data-autofocus
+          />
+
+          {insertType === "link" && (
+            <TextInput
+              label={t("URL")}
+              placeholder="https://example.com"
+              value={insertUrl}
+              onChange={(e) => setInsertUrl(e.currentTarget.value)}
+              leftSection={<IconLink size={14} />}
+            />
+          )}
+
+          <TextInput
+            label={t("Position")}
+            description={t("Insert before root page at this index (0 = top of sidebar)")}
+            type="number"
+            value={String(insertPosition)}
+            onChange={(e) => setInsertPosition(parseInt(e.currentTarget.value) || 0)}
+          />
+
+          <Group justify="flex-end">
+            <Button variant="default" onClick={closeInsertModal}>
+              {t("Cancel")}
+            </Button>
+            <Button
+              onClick={handleAddInsert}
+              disabled={!insertLabel.trim() || (insertType === "link" && !insertUrl.trim())}
+              loading={updateSpaceMutation.isPending}
+            >
+              {insertType === "header" ? t("Add Group") : t("Add Link")}
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </>
   );
 }
