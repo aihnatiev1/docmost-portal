@@ -103,6 +103,7 @@ export default function SpaceDetails({ spaceId, readOnly }: SpaceDetailsProps) {
               <PortalSettingsForm
                 spaceId={space.id}
                 portalSettings={space.portalSettings || {}}
+                spaceSlug={space.slug}
               />
             </>
           )}
