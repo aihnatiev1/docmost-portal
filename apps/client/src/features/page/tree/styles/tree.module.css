@@ -170,3 +170,21 @@
 .insertLink:hover .insertLinkArrow {
     opacity: 0.8;
 }
+
+/* Delete button for sidebar inserts (hidden until hover) */
+.insertDeleteBtn {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+}
+
+.insertHeader:hover .insertDeleteBtn,
+.insertLink:hover .insertDeleteBtn {
+    visibility: visible;
+    opacity: 0.5;
+}
+
+.insertDeleteBtn:hover {
+    opacity: 1 !important;
+}

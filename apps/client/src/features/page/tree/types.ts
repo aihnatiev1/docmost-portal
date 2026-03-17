@@ -12,4 +12,5 @@ export type SpaceTreeNode = {
   // Sidebar insert fields (for header/link items)
   _insertType?: "header" | "link";
   _insertUrl?: string;
+  _insertPosition?: number;
 };

@@ -70,13 +70,7 @@ import { mobileSidebarAtom } from "@/components/layouts/global/hooks/atoms/sideb
 import { useToggleSidebar } from "@/components/layouts/global/hooks/hooks/use-toggle-sidebar.ts";
 import CopyPageModal from "../../components/copy-page-modal.tsx";
 import { duplicatePage } from "../../services/page-service.ts";
-
-interface SidebarInsert {
-  type: "header" | "link";
-  label: string;
-  url?: string;
-  position: number;
-}
+import { getDeleteInsertFn, SidebarInsert } from "@/features/page/tree/atoms/sidebar-insert-atoms.ts";
 
 interface SpaceTreeProps {
   spaceId: string;
@@ -267,6 +261,7 @@ export default function SpaceTree({ spaceId, readOnly, sidebarInserts }: SpaceTr
             children: [],
             _insertType: ins.type,
             _insertUrl: ins.url,
+            _insertPosition: ins.position,
           });
         }
       }
@@ -292,6 +287,7 @@ export default function SpaceTree({ spaceId, readOnly, sidebarInserts }: SpaceTr
           children: [],
           _insertType: ins.type,
           _insertUrl: ins.url,
+          _insertPosition: ins.position,
         });
       }
     }
@@ -362,14 +358,34 @@ function Node({ node, style, dragHandle, tree }: NodeRendererProps<any>) {
 
   // Render sidebar insert items (headers and external links)
   if (node.data._insertType === "header") {
+    const deleteFn = getDeleteInsertFn();
     return (
       <div style={style} className={classes.insertHeader}>
-        {node.data.name}
+        <span style={{ flex: 1 }}>{node.data.name}</span>
+        {deleteFn && (
+          <ActionIcon
+            variant="transparent"
+            size={16}
+            c="gray"
+            className={classes.insertDeleteBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteFn({
+                type: "header",
+                label: node.data.name,
+                position: node.data._insertPosition ?? 0,
+              });
+            }}
+          >
+            <IconTrash size={12} />
+          </ActionIcon>
+        )}
       </div>
     );
   }
 
   if (node.data._insertType === "link") {
+    const deleteFn = getDeleteInsertFn();
     return (
       <a
         href={node.data._insertUrl || "#"}
@@ -382,6 +398,26 @@ function Node({ node, style, dragHandle, tree }: NodeRendererProps<any>) {
           <IconExternalLink size={18} stroke={1.5} />
         </span>
         <span className={classes.insertLinkLabel}>{node.data.name}</span>
+        {deleteFn && (
+          <ActionIcon
+            variant="transparent"
+            size={16}
+            c="gray"
+            className={classes.insertDeleteBtn}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              deleteFn({
+                type: "link",
+                label: node.data.name,
+                url: node.data._insertUrl,
+                position: node.data._insertPosition ?? 0,
+              });
+            }}
+          >
+            <IconTrash size={12} />
+          </ActionIcon>
+        )}
         <span className={classes.insertLinkArrow}>
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M1 9L9 1M9 1H3M9 1V7" />

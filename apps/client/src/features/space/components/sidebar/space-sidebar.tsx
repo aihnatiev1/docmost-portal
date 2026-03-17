@@ -25,9 +25,10 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import classes from "./space-sidebar.module.css";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { treeApiAtom } from "@/features/page/tree/atoms/tree-api-atom.ts";
+import { setDeleteInsertFn, SidebarInsert } from "@/features/page/tree/atoms/sidebar-insert-atoms.ts";
 import { Link, useLocation, useParams } from "react-router-dom";
 import clsx from "clsx";
 import { useDisclosure } from "@mantine/hooks";
@@ -72,6 +73,31 @@ export function SpaceSidebar() {
   const [insertPosition, setInsertPosition] = useState(0);
   const updateSpaceMutation = useUpdateSpaceMutation();
 
+  // Helper to get parsed portalSettings
+  const getPortalSettings = useCallback(() => {
+    const raw = space?.portalSettings;
+    return typeof raw === 'string'
+      ? (() => { try { return JSON.parse(raw); } catch { return {}; } })()
+      : raw || {};
+  }, [space?.portalSettings]);
+
+  // Register delete callback for sidebar inserts (used by tree Node component)
+  useEffect(() => {
+    if (!space) return;
+    setDeleteInsertFn(async (insert: SidebarInsert) => {
+      const portalSettings = getPortalSettings();
+      const existing: SidebarInsert[] = portalSettings.sidebarInserts || [];
+      const updated = existing.filter(
+        (ins) => !(ins.type === insert.type && ins.label === insert.label && ins.position === insert.position)
+      );
+      await updateSpaceMutation.mutateAsync({
+        spaceId: space.id,
+        portalSettings: { ...portalSettings, sidebarInserts: updated },
+      });
+    });
+    return () => setDeleteInsertFn(null);
+  }, [space?.id, space?.portalSettings]);
+
   if (!space) {
     return <></>;
   }
@@ -99,11 +125,7 @@ export function SpaceSidebar() {
   async function handleAddInsert() {
     if (!insertLabel.trim()) return;
 
-    const rawSettings = space?.portalSettings;
-    const portalSettings = typeof rawSettings === 'string'
-      ? (() => { try { return JSON.parse(rawSettings); } catch { return {}; } })()
-      : rawSettings || {};
-
+    const portalSettings = getPortalSettings();
     const existing = portalSettings.sidebarInserts || [];
     const newInsert: any = {
       type: insertType,
@@ -119,6 +141,14 @@ export function SpaceSidebar() {
       spaceId: space.id,
       portalSettings: { ...portalSettings, sidebarInserts: updated },
     });
+
+    // For groups, also create an empty page at that position
+    if (insertType === "header") {
+      setTimeout(() => {
+        tree?.create({ parentId: null, type: "internal", index: insertPosition });
+      }, 300);
+    }
+
     closeInsertModal();
   }
 
