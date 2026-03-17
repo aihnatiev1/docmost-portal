@@ -37,8 +37,15 @@ export interface IPortalSettings {
   externalLinksTarget?: "same_tab" | "new_tab";
   pageRatingsEnabled?: boolean;
   privacyPolicyUrl?: string;
-  // Navigation items
+  // Navigation items (header)
   navigationItems?: Array<{ label: string; url: string; type: "link" | "menu" }>;
+  // Sidebar inserts (headers & external links placed between pages)
+  sidebarInserts?: Array<{
+    type: "header" | "link";
+    label: string;
+    url?: string;       // only for type "link"
+    position: number;   // insert before root page at this index (0=top)
+  }>;
   // Existing fields
   customDomain?: string;
   analyticsId?: string;

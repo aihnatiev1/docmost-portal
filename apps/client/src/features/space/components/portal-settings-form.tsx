@@ -173,6 +173,33 @@ export function PortalSettingsForm({
     updateField("navigationItems", navItems.filter((_, i) => i !== index));
   };
 
+  // Sidebar inserts management (groups & external links)
+  const sidebarInserts = settings.sidebarInserts || [];
+  const addSidebarInsert = (type: "header" | "link") => {
+    const nextPos = sidebarInserts.length > 0
+      ? Math.max(...sidebarInserts.map((i) => i.position)) + 1
+      : 0;
+    updateField("sidebarInserts", [
+      ...sidebarInserts,
+      { type, label: "", url: type === "link" ? "" : undefined, position: nextPos },
+    ]);
+  };
+  const updateSidebarInsert = (index: number, field: string, value: any) => {
+    const updated = [...sidebarInserts];
+    updated[index] = { ...updated[index], [field]: value };
+    updateField("sidebarInserts", updated);
+  };
+  const removeSidebarInsert = (index: number) => {
+    updateField("sidebarInserts", sidebarInserts.filter((_, i) => i !== index));
+  };
+  const moveSidebarInsert = (index: number, direction: -1 | 1) => {
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= sidebarInserts.length) return;
+    const updated = [...sidebarInserts];
+    [updated[index], updated[newIndex]] = [updated[newIndex], updated[index]];
+    updateField("sidebarInserts", updated);
+  };
+
   const portalUrl = settings.customDomain
     ? `https://${settings.customDomain}`
     : spaceSlug
@@ -766,6 +793,119 @@ export function PortalSettingsForm({
                     </Stack>
                   </div>
                 </Stack>
+              )}
+            </Paper>
+
+            {/* ── Sidebar Navigation ── */}
+            <Paper p="lg" radius="md" withBorder>
+              <Group justify="space-between" mb="md">
+                <div>
+                  <Text fw={600}>{t("Sidebar")}</Text>
+                  <Text size="xs" c="dimmed">
+                    {t("Add group headers and external links between documentation pages in the sidebar.")}
+                  </Text>
+                </div>
+                <Group gap="xs">
+                  <Button
+                    variant="light"
+                    size="xs"
+                    leftSection={<IconLayout size={14} />}
+                    onClick={() => addSidebarInsert("header")}
+                  >
+                    {t("Group")}
+                  </Button>
+                  <Button
+                    variant="light"
+                    size="xs"
+                    leftSection={<IconExternalLink size={14} />}
+                    onClick={() => addSidebarInsert("link")}
+                  >
+                    {t("Link")}
+                  </Button>
+                </Group>
+              </Group>
+
+              <Stack gap="xs">
+                {sidebarInserts.length === 0 && (
+                  <Paper p="md" radius="md" ta="center" style={{ background: "var(--mantine-color-default-hover)" }}>
+                    <Text size="sm" c="dimmed">
+                      {t("No sidebar items. Add groups or external links to organize the sidebar.")}
+                    </Text>
+                  </Paper>
+                )}
+
+                {sidebarInserts.map((item, index) => (
+                  <Paper key={index} p="sm" radius="md" withBorder
+                    style={{
+                      borderLeft: item.type === "header"
+                        ? "3px solid var(--mantine-primary-color-filled)"
+                        : "3px solid var(--mantine-color-gray-4)",
+                    }}
+                  >
+                    <Group gap="sm" align="flex-end" wrap="nowrap">
+                      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                        <ActionIcon variant="subtle" color="gray" size="xs" onClick={() => moveSidebarInsert(index, -1)} disabled={index === 0}>
+                          <svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 3L2 7h8z" fill="currentColor"/></svg>
+                        </ActionIcon>
+                        <ActionIcon variant="subtle" color="gray" size="xs" onClick={() => moveSidebarInsert(index, 1)} disabled={index === sidebarInserts.length - 1}>
+                          <svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 9L2 5h8z" fill="currentColor"/></svg>
+                        </ActionIcon>
+                      </div>
+
+                      <Badge
+                        size="sm"
+                        variant="light"
+                        color={item.type === "header" ? "blue" : "gray"}
+                        style={{ flexShrink: 0 }}
+                      >
+                        {item.type === "header" ? t("Group") : t("Link")}
+                      </Badge>
+
+                      <TextInput
+                        label={index === 0 ? t("Label") : undefined}
+                        placeholder={item.type === "header" ? "PROXY-SELLER" : "SDK PHP"}
+                        value={item.label}
+                        onChange={(e) => updateSidebarInsert(index, "label", e.currentTarget.value)}
+                        style={{ flex: 1 }}
+                        size="sm"
+                      />
+
+                      {item.type === "link" && (
+                        <TextInput
+                          label={index === 0 ? t("URL") : undefined}
+                          placeholder="https://example.com"
+                          value={item.url || ""}
+                          onChange={(e) => updateSidebarInsert(index, "url", e.currentTarget.value)}
+                          style={{ flex: 2 }}
+                          size="sm"
+                          leftSection={<IconLink size={14} />}
+                        />
+                      )}
+
+                      <TextInput
+                        label={index === 0 ? t("Position") : undefined}
+                        placeholder="0"
+                        value={String(item.position ?? 0)}
+                        onChange={(e) => updateSidebarInsert(index, "position", parseInt(e.currentTarget.value) || 0)}
+                        style={{ width: 70 }}
+                        size="sm"
+                        type="number"
+                      />
+
+                      <Tooltip label={t("Remove")}>
+                        <ActionIcon variant="subtle" color="red" onClick={() => removeSidebarInsert(index)} size="lg">
+                          <IconTrash size={16} />
+                        </ActionIcon>
+                      </Tooltip>
+                    </Group>
+                  </Paper>
+                ))}
+              </Stack>
+
+              {sidebarInserts.length > 0 && (
+                <Text size="xs" c="dimmed" mt="sm">
+                  {t("Position = before which root page (0 = top). Pages are: Documentation(0), Authorization(1), Actions with Proxies(2), ...")}
+                </Text>
               )}
             </Paper>
 

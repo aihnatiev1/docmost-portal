@@ -366,7 +366,12 @@ export default function DocsPortalLayout() {
           )}
 
           <AppShell.Navbar className={classes.navbar}>
-            <DocsNavTree tree={tree} spaceSlug={spaceSlug!} />
+            <DocsNavTree
+              tree={tree}
+              spaceSlug={spaceSlug!}
+              sidebarInserts={portalSettings.sidebarInserts}
+              externalLinksTarget={portalSettings.externalLinksTarget}
+            />
           </AppShell.Navbar>
 
           <AppShell.Main>

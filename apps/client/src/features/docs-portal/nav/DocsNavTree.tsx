@@ -1,15 +1,24 @@
 import { useState } from "react";
 import { ScrollArea } from "@mantine/core";
-import { IconChevronRight, IconFileText } from "@tabler/icons-react";
+import { IconChevronRight, IconFileText, IconExternalLink } from "@tabler/icons-react";
 import { Link, useParams } from "react-router-dom";
 import { ITreeNode } from "../types/docs-portal.types";
 import { buildPageSlug } from "../hooks/use-doc-tree";
 import classes from "../styles/docs-portal.module.css";
 import cx from "clsx";
 
+interface SidebarInsert {
+  type: "header" | "link";
+  label: string;
+  url?: string;
+  position: number;
+}
+
 interface DocsNavTreeProps {
   tree: ITreeNode[];
   spaceSlug: string;
+  sidebarInserts?: SidebarInsert[];
+  externalLinksTarget?: "same_tab" | "new_tab";
 }
 
 function NavTreeItem({
@@ -98,9 +107,135 @@ function extractSlugId(pageSlug: string | undefined): string | null {
   return parts.length > 1 ? parts[parts.length - 1] : pageSlug;
 }
 
-export default function DocsNavTree({ tree, spaceSlug }: DocsNavTreeProps) {
+/** Render a sidebar section header (e.g., "PROXY-SELLER", "MOBILE CRM") */
+function SidebarGroupHeader({ label }: { label: string }) {
+  return <div className={classes.navSectionLabel}>{label}</div>;
+}
+
+/** Render a sidebar external link with arrow icon */
+function SidebarExternalLink({
+  label,
+  url,
+  target,
+}: {
+  label: string;
+  url: string;
+  target?: string;
+}) {
+  return (
+    <a
+      href={url}
+      target={target || "_blank"}
+      rel="noopener noreferrer"
+      className={classes.navItem}
+      style={{ paddingLeft: 10 }}
+    >
+      <span className={classes.navItemIcon}>
+        <IconExternalLink size={16} stroke={1.5} />
+      </span>
+      <span className={classes.navItemLabel}>{label}</span>
+      <span className={classes.navExternalArrow}>
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M1 9L9 1M9 1H3M9 1V7" />
+        </svg>
+      </span>
+    </a>
+  );
+}
+
+export default function DocsNavTree({
+  tree,
+  spaceSlug,
+  sidebarInserts,
+  externalLinksTarget,
+}: DocsNavTreeProps) {
   const { pageSlug } = useParams<{ pageSlug?: string }>();
   const activeSlugId = extractSlugId(pageSlug);
+
+  const linkTarget = externalLinksTarget === "same_tab" ? "_self" : "_blank";
+
+  // Build sidebar items: interleave inserts with page tree nodes
+  const items: React.ReactNode[] = [];
+
+  if (sidebarInserts && sidebarInserts.length > 0) {
+    // Group inserts by position
+    const insertsByPos: Record<number, SidebarInsert[]> = {};
+    for (const ins of sidebarInserts) {
+      if (!insertsByPos[ins.position]) insertsByPos[ins.position] = [];
+      insertsByPos[ins.position].push(ins);
+    }
+
+    // Render: for each position, render inserts first, then the page node
+    tree.forEach((node, idx) => {
+      // Render inserts before this page
+      if (insertsByPos[idx]) {
+        for (const ins of insertsByPos[idx]) {
+          if (ins.type === "header") {
+            items.push(
+              <SidebarGroupHeader key={`hdr-${idx}-${ins.label}`} label={ins.label} />,
+            );
+          } else if (ins.type === "link" && ins.url) {
+            items.push(
+              <SidebarExternalLink
+                key={`lnk-${idx}-${ins.label}`}
+                label={ins.label}
+                url={ins.url}
+                target={linkTarget}
+              />,
+            );
+          }
+        }
+      }
+
+      // Render the page tree node
+      items.push(
+        <NavTreeItem
+          key={node.id}
+          node={node}
+          spaceSlug={spaceSlug}
+          activeSlugId={activeSlugId}
+          level={0}
+        />,
+      );
+    });
+
+    // Render any inserts after the last page (position >= tree.length)
+    const afterEnd = Object.entries(insertsByPos)
+      .filter(([pos]) => Number(pos) >= tree.length)
+      .sort(([a], [b]) => Number(a) - Number(b));
+
+    for (const [, inserts] of afterEnd) {
+      for (const ins of inserts) {
+        if (ins.type === "header") {
+          items.push(
+            <SidebarGroupHeader key={`hdr-end-${ins.label}`} label={ins.label} />,
+          );
+        } else if (ins.type === "link" && ins.url) {
+          items.push(
+            <SidebarExternalLink
+              key={`lnk-end-${ins.label}`}
+              label={ins.label}
+              url={ins.url}
+              target={linkTarget}
+            />,
+          );
+        }
+      }
+    }
+  } else {
+    // No inserts — render plain tree
+    tree.forEach((node) => {
+      items.push(
+        <NavTreeItem
+          key={node.id}
+          node={node}
+          spaceSlug={spaceSlug}
+          activeSlugId={activeSlugId}
+          level={0}
+        />,
+      );
+    });
+  }
 
   return (
     <ScrollArea
@@ -108,17 +243,7 @@ export default function DocsNavTree({ tree, spaceSlug }: DocsNavTreeProps) {
       scrollbarSize={4}
       type="hover"
     >
-      <div className={classes.navSection}>
-        {tree.map((node) => (
-          <NavTreeItem
-            key={node.id}
-            node={node}
-            spaceSlug={spaceSlug}
-            activeSlugId={activeSlugId}
-            level={0}
-          />
-        ))}
-      </div>
+      <div className={classes.navSection}>{items}</div>
     </ScrollArea>
   );
 }

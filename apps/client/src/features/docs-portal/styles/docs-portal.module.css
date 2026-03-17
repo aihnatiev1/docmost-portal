@@ -262,6 +262,18 @@
   text-overflow: ellipsis;
 }
 
+.navExternalArrow {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  opacity: 0.35;
+  transition: opacity 150ms ease;
+
+  .navItem:hover & {
+    opacity: 0.7;
+  }
+}
+
 .navChevron {
   display: flex;
   align-items: center;
