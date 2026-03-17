@@ -76,6 +76,8 @@ function buildThemeStyles(ps: IPortalSettings): string {
   if (theme.primaryColor) {
     parts.push(`
       .docs-portal a:not([class]) { color: ${theme.primaryColor}; }
+      .docs-portal .ProseMirror a { color: ${theme.primaryColor} !important; border-bottom-color: ${theme.primaryColor}30 !important; }
+      .docs-portal .ProseMirror a:hover { border-bottom-color: ${theme.primaryColor}80 !important; }
       .docs-portal .${classes.navItemActive} {
         background: ${theme.primaryColor}22 !important;
         color: ${theme.primaryColor} !important;
@@ -87,6 +89,9 @@ function buildThemeStyles(ps: IPortalSettings): string {
       }
       .docs-portal .${classes.pageNavCard}:hover {
         border-color: ${theme.primaryColor}40;
+      }
+      .docs-portal .${classes.navItemActive} .${classes.navItemIcon} {
+        color: ${theme.primaryColor} !important;
       }
     `);
   }
@@ -198,6 +203,25 @@ function buildThemeStyles(ps: IPortalSettings): string {
   return parts.join("\n");
 }
 
+/**
+ * Build a Google Fonts URL for a given font family string.
+ * Returns null for system/generic fonts that don't need loading.
+ */
+function buildGoogleFontUrl(fontFamily: string): string | null {
+  if (!fontFamily) return null;
+  const primaryFont = fontFamily.split(",")[0].trim().replace(/['"]/g, "");
+  if (!primaryFont) return null;
+  const systemFonts = [
+    "system-ui", "sans-serif", "serif", "monospace", "cursive", "fantasy",
+    "ui-monospace", "ui-sans-serif", "ui-serif", "ui-rounded",
+    "Arial", "Helvetica", "Times New Roman", "Courier New", "Georgia",
+    "Verdana", "Tahoma", "Trebuchet MS", "Impact", "Comic Sans MS",
+  ];
+  if (systemFonts.some((f) => f.toLowerCase() === primaryFont.toLowerCase())) return null;
+  const formatted = primaryFont.replace(/\s+/g, "+");
+  return `https://fonts.googleapis.com/css2?family=${formatted}:wght@300;400;500;600;700;800&display=swap`;
+}
+
 export default function DocsPortalLayout() {
   const { spaceSlug, pageSlug } = useParams<{
     spaceSlug: string;
@@ -276,6 +300,17 @@ export default function DocsPortalLayout() {
   const cssVars = buildThemeCssVars(portalSettings);
   const themeStyles = buildThemeStyles(portalSettings);
 
+  // Google Fonts links
+  const googleFontLinks: string[] = [];
+  if (portalSettings.theme?.fontFamily) {
+    const url = buildGoogleFontUrl(portalSettings.theme.fontFamily);
+    if (url) googleFontLinks.push(url);
+  }
+  if (portalSettings.theme?.codeFontFamily) {
+    const url = buildGoogleFontUrl(portalSettings.theme.codeFontFamily);
+    if (url) googleFontLinks.push(url);
+  }
+
   // Derived toggles
   const showHeader = portalSettings.headerEnabled !== false;
   const showPagination = portalSettings.paginationEnabled !== false;
@@ -299,6 +334,9 @@ export default function DocsPortalLayout() {
         {portalSettings.favicon && (
           <link rel="icon" href={portalSettings.favicon} />
         )}
+        {googleFontLinks.map((url, i) => (
+          <link key={i} rel="stylesheet" href={url} />
+        ))}
       </Helmet>
 
       {/* Theme-driven CSS */}

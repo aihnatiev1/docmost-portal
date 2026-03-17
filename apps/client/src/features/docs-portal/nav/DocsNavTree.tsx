@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ScrollArea } from "@mantine/core";
-import { IconChevronRight, IconFileText, IconExternalLink } from "@tabler/icons-react";
+import { IconChevronRight, IconFileDescription, IconBook2, IconExternalLink } from "@tabler/icons-react";
 import { Link, useParams } from "react-router-dom";
 import { ITreeNode } from "../types/docs-portal.types";
 import { buildPageSlug } from "../hooks/use-doc-tree";
@@ -44,12 +44,15 @@ function NavTreeItem({
         to={`/docs/${spaceSlug}/${buildPageSlug(node.title, node.slugId)}`}
         className={cx(classes.navItem, isActive && classes.navItemActive)}
         style={{ paddingLeft: level * 16 + 10 }}
+        onClick={() => { if (hasChildren) setOpened((o) => !o); }}
       >
         <span className={classes.navItemIcon}>
           {node.icon ? (
             <span style={{ fontSize: 15 }}>{node.icon}</span>
+          ) : hasChildren ? (
+            <IconBook2 size={16} stroke={1.5} />
           ) : (
-            <IconFileText size={16} stroke={1.5} />
+            <IconFileDescription size={16} stroke={1.5} />
           )}
         </span>
 
