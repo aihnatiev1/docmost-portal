@@ -10,6 +10,7 @@ import { Typography } from "@tiptap/extension-typography";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import GlobalDragHandle from "tiptap-extension-global-drag-handle";
+import { AddBlockButton } from "@/features/editor/extensions/add-block-button";
 import { Youtube } from "@tiptap/extension-youtube";
 import SlashCommand from "@/features/editor/extensions/slash-command";
 import { Collaboration, isChangeOrigin } from "@tiptap/extension-collaboration";
@@ -190,6 +191,7 @@ export const mainExtensions = [
   Typography,
   TrailingNode,
   GlobalDragHandle,
+  AddBlockButton,
   TextStyle,
   Color,
   SlashCommand,
