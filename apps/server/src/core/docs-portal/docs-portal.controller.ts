@@ -136,6 +136,12 @@ export class DocsPortalController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('admin/:spaceId/pages')
+  async getAdminPages(@Param('spaceId') spaceId: string) {
+    return this.docsPortalService.getAllSpacePages(spaceId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('analytics/:spaceId')
   async getAnalytics(
     @Param('spaceId') spaceId: string,

@@ -92,6 +92,18 @@ export async function getAllSidebarPages(
   };
 }
 
+export async function bulkPublishPages(
+  pageIds: string[],
+  isDraft: boolean,
+  publishAt?: string | null,
+): Promise<{ updated: number; isDraft: boolean }> {
+  const req = await api.post<{ updated: number; isDraft: boolean }>(
+    "/pages/bulk-publish",
+    { pageIds, isDraft, publishAt },
+  );
+  return req.data;
+}
+
 export async function getPageBreadcrumbs(
   pageId: string,
 ): Promise<Partial<IPage[]>> {

@@ -8,6 +8,7 @@ import {
   getDocTranslations,
   submitFeedback,
   getAnalytics,
+  getAdminPages,
 } from "../services/docs-portal-service";
 
 export function useDocSpaceQuery(spaceSlug: string) {
@@ -61,6 +62,15 @@ export function useDocTranslationsQuery(spaceSlug: string) {
     queryFn: () => getDocTranslations(spaceSlug),
     enabled: !!spaceSlug,
     staleTime: 10 * 60 * 1000,
+  });
+}
+
+export function useAdminPagesQuery(spaceId: string) {
+  return useQuery({
+    queryKey: ["admin-pages", spaceId],
+    queryFn: () => getAdminPages(spaceId),
+    enabled: !!spaceId,
+    staleTime: 30 * 1000,
   });
 }
 

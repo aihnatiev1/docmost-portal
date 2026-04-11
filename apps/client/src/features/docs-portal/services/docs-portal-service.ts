@@ -91,6 +91,13 @@ export interface IAnalyticsData {
   }>;
 }
 
+export async function getAdminPages(
+  spaceId: string,
+): Promise<Array<{ id: string; title: string; slugId: string; isDraft: boolean; publishAt: string | null }>> {
+  const req = await api.get(`/docs-portal/admin/${spaceId}/pages`);
+  return req.data;
+}
+
 export async function getAnalytics(
   spaceId: string,
   days: number = 30,

@@ -37,6 +37,7 @@ import { PageRepo } from '@docmost/db/repos/page/page.repo';
 import { RecentPageDto } from './dto/recent-page.dto';
 import { DuplicatePageDto } from './dto/duplicate-page.dto';
 import { DeletedPageDto } from './dto/deleted-page.dto';
+import { BulkPublishPageDto } from './dto/bulk-publish-page.dto';
 import {
   jsonToHtml,
   jsonToMarkdown,
@@ -609,6 +610,51 @@ export class PageController {
     }
 
     return this.pageService.movePage(dto, movedPage);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('bulk-publish')
+  async bulkPublish(
+    @Body() dto: BulkPublishPageDto,
+    @AuthUser() user: User,
+  ) {
+    if (!dto.pageIds || dto.pageIds.length === 0) {
+      throw new BadRequestException('pageIds must not be empty');
+    }
+
+    if (dto.pageIds.length > 100) {
+      throw new BadRequestException('Cannot bulk update more than 100 pages');
+    }
+
+    // Verify all pages exist and user has edit access
+    const pages = await Promise.all(
+      dto.pageIds.map((id) => this.pageRepo.findById(id)),
+    );
+
+    for (const page of pages) {
+      if (!page) {
+        throw new NotFoundException('One or more pages not found');
+      }
+      await this.pageAccessService.validateCanEdit(page, user);
+    }
+
+    // Perform bulk update
+    const updateData: Record<string, any> = {
+      isDraft: dto.isDraft,
+      lastUpdatedById: user.id,
+      updatedAt: new Date(),
+    };
+
+    if (dto.publishAt !== undefined) {
+      updateData.publishAt = dto.publishAt;
+    }
+
+    await this.pageRepo.updatePages(updateData, dto.pageIds);
+
+    return {
+      updated: dto.pageIds.length,
+      isDraft: dto.isDraft,
+    };
   }
 
   @HttpCode(HttpStatus.OK)

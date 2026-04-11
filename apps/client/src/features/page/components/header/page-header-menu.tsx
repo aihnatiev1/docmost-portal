@@ -168,20 +168,15 @@ function PageActionMenu({ readOnly }: PageActionMenuProps) {
     updatePageMutation.mutate(
       { pageId: page.id, isDraft: newIsDraft } as any,
       {
-        onSuccess: () => {
+        onSuccess: (updatedPage) => {
           notifications.show({
             message: newIsDraft
               ? t("Page marked as draft")
               : t("Page published"),
           });
-          queryClient.setQueryData(["pages", page.slugId], {
-            ...page,
-            isDraft: newIsDraft,
-          });
-          queryClient.setQueryData(["pages", page.id], {
-            ...page,
-            isDraft: newIsDraft,
-          });
+          // Invalidate to refresh from server instead of manual cache writes
+          queryClient.invalidateQueries({ queryKey: ["pages", page.slugId] });
+          queryClient.invalidateQueries({ queryKey: ["pages", page.id] });
         },
       },
     );

@@ -273,6 +273,26 @@ export class DocsPortalService {
       .execute();
   }
 
+  async getAllSpacePages(spaceId: string) {
+    return this.db
+      .selectFrom('pages')
+      .select([
+        'id',
+        'title',
+        'slugId',
+        'icon',
+        'parentPageId',
+        'position',
+        'isDraft',
+        'publishAt',
+      ])
+      .where('spaceId', '=', spaceId)
+      .where('deletedAt', 'is', null)
+      .orderBy('position', 'asc')
+      .orderBy('title', 'asc')
+      .execute();
+  }
+
   async getSpaceTranslations(spaceId: string) {
     return this.db
       .selectFrom('spaceTranslations')

@@ -13,6 +13,7 @@ interface Props {
 export default function PageHeader({ readOnly }: Props) {
   const { t } = useTranslation();
   const { pageSlug } = useParams();
+  // Reuse cached query — no extra network request, staleTime: 5min in usePageQuery
   const { data: page } = usePageQuery({
     pageId: extractPageSlugId(pageSlug),
   });

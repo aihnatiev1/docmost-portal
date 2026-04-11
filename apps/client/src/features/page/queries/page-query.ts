@@ -20,6 +20,7 @@ import {
   getAllSidebarPages,
   getDeletedPages,
   restorePage,
+  bulkPublishPages,
 } from "@/features/page/services/page-service";
 import {
   IMovePage,
@@ -157,6 +158,19 @@ export function useDeletePageMutation() {
 export function useMovePageMutation() {
   return useMutation<void, Error, IMovePage>({
     mutationFn: (data) => movePage(data),
+  });
+}
+
+export function useBulkPublishMutation() {
+  return useMutation({
+    mutationFn: (data: { pageIds: string[]; isDraft: boolean; publishAt?: string | null }) =>
+      bulkPublishPages(data.pageIds, data.isDraft, data.publishAt),
+    onSuccess: () => {
+      // Invalidate all sidebar and page queries
+      queryClient.invalidateQueries({ predicate: (q) =>
+        ["pages", "sidebar-pages", "root-sidebar-pages", "recent-changes"].includes(q.queryKey[0] as string),
+      });
+    },
   });
 }
 

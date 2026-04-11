@@ -46,6 +46,7 @@ import { IPortalSettings } from "@/features/space/types/space.types";
 import { useTranslation } from "react-i18next";
 import { notifications } from "@mantine/notifications";
 import PortalAnalyticsTab from "./portal-analytics-tab";
+import PortalBulkPublish from "./portal-bulk-publish";
 
 interface PortalSettingsFormProps {
   spaceId: string;
@@ -303,6 +304,9 @@ export function PortalSettingsForm({
           </Tabs.Tab>
           <Tabs.Tab value="configure" leftSection={<IconSettings size={16} />}>
             {t("Configure")}
+          </Tabs.Tab>
+          <Tabs.Tab value="publish" leftSection={<IconShieldLock size={16} />}>
+            {t("Publish")}
           </Tabs.Tab>
           <Tabs.Tab value="analytics" leftSection={<IconDeviceAnalytics size={16} />}>
             {t("Analytics")}
@@ -1162,6 +1166,10 @@ export function PortalSettingsForm({
             </Paper>
 
           </Stack>
+        </Tabs.Panel>
+
+        <Tabs.Panel value="publish" pt="lg">
+          <PortalBulkPublish spaceSlug={spaceSlug || ""} spaceId={spaceId} />
         </Tabs.Panel>
 
         <Tabs.Panel value="analytics" pt="lg">
