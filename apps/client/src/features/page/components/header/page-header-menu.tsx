@@ -22,9 +22,10 @@ import { historyAtoms } from "@/features/page-history/atoms/history-atoms.ts";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { useParams } from "react-router-dom";
-import { usePageQuery } from "@/features/page/queries/page-query.ts";
+import { usePageQuery, useUpdatePageMutation } from "@/features/page/queries/page-query.ts";
 import { buildPageUrl } from "@/features/page/page.utils.ts";
 import { notifications } from "@mantine/notifications";
+import { queryClient } from "@/main.tsx";
 import { getAppUrl } from "@/lib/config.ts";
 import { extractPageSlugId } from "@/lib";
 import { treeApiAtom } from "@/features/page/tree/atoms/tree-api-atom.ts";
@@ -122,6 +123,7 @@ function PageActionMenu({ readOnly }: PageActionMenuProps) {
   });
   const { openDeleteModal } = useDeletePageModal();
   const [tree] = useAtom(treeApiAtom);
+  const updatePageMutation = useUpdatePageMutation();
   const [exportOpened, { open: openExportModal, close: closeExportModal }] =
     useDisclosure(false);
   const [
@@ -159,6 +161,30 @@ function PageActionMenu({ readOnly }: PageActionMenuProps) {
 
   const openHistoryModal = () => {
     setHistoryModalOpen(true);
+  };
+
+  const handleToggleDraft = () => {
+    const newIsDraft = !page.isDraft;
+    updatePageMutation.mutate(
+      { pageId: page.id, isDraft: newIsDraft } as any,
+      {
+        onSuccess: () => {
+          notifications.show({
+            message: newIsDraft
+              ? t("Page marked as draft")
+              : t("Page published"),
+          });
+          queryClient.setQueryData(["pages", page.slugId], {
+            ...page,
+            isDraft: newIsDraft,
+          });
+          queryClient.setQueryData(["pages", page.id], {
+            ...page,
+            isDraft: newIsDraft,
+          });
+        },
+      },
+    );
   };
 
   const handleDeletePage = () => {
@@ -226,6 +252,21 @@ function PageActionMenu({ readOnly }: PageActionMenuProps) {
           >
             {t("Page history")}
           </Menu.Item>
+
+          {!readOnly && (
+            <Menu.Item
+              leftSection={
+                page.isDraft ? (
+                  <IconEye size={16} />
+                ) : (
+                  <IconEyeOff size={16} />
+                )
+              }
+              onClick={handleToggleDraft}
+            >
+              {page.isDraft ? t("Publish") : t("Mark as draft")}
+            </Menu.Item>
+          )}
 
           <Menu.Divider />
 

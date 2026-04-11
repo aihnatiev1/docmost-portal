@@ -12,6 +12,9 @@ export interface IPage {
   spaceId: string;
   workspaceId: string;
   isLocked: boolean;
+  isDraft: boolean;
+  publishAt: string | null;
+  metaDescription: string | null;
   lastUpdatedById: string;
   createdAt: Date;
   updatedAt: Date;
@@ -78,6 +81,9 @@ export interface IPageInput {
   coverPhoto: string;
   position: string;
   isLocked: boolean;
+  isDraft: boolean;
+  publishAt: string | null;
+  metaDescription: string | null;
 }
 
 export interface IExportPageParams {

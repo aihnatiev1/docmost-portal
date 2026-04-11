@@ -207,16 +207,27 @@ export class PageService {
     contributors.add(user.id);
     const contributorIds = Array.from(contributors);
 
-    await this.pageRepo.updatePage(
-      {
-        title: updatePageDto.title,
-        icon: updatePageDto.icon,
-        lastUpdatedById: user.id,
-        updatedAt: new Date(),
-        contributorIds: contributorIds,
-      },
-      page.id,
-    );
+    const updateData: Record<string, any> = {
+      title: updatePageDto.title,
+      icon: updatePageDto.icon,
+      lastUpdatedById: user.id,
+      updatedAt: new Date(),
+      contributorIds: contributorIds,
+    };
+
+    if (updatePageDto.isDraft !== undefined) {
+      updateData.isDraft = updatePageDto.isDraft;
+    }
+
+    if (updatePageDto.publishAt !== undefined) {
+      updateData.publishAt = updatePageDto.publishAt;
+    }
+
+    if (updatePageDto.metaDescription !== undefined) {
+      updateData.metaDescription = updatePageDto.metaDescription;
+    }
+
+    await this.pageRepo.updatePage(updateData, page.id);
 
     this.generalQueue
       .add(QueueJob.ADD_PAGE_WATCHERS, {
