@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'CHANGED=\"$TOOL_FILE_PATH\"; if echo \"$CHANGED\" | grep -qE \"commitdoc-ds/commitdoc/|/var/www/commitdoc-ds/\"; then sudo bash /root/docmost/scripts/update-design-system.sh 2>&1 | tail -2; fi'",
+            "timeout": 30000
+          }
+        ]
+      }
+    ]
+  }
+}
