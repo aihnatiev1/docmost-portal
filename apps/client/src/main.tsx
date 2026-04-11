@@ -25,6 +25,7 @@ import {
 } from "@/lib/config.ts";
 import posthog from "posthog-js";
 import { registerGlobalShortcuts } from "@/lib/keyboard-shortcuts";
+import { initStickyContext } from "@/lib/sticky-context";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,6 +48,7 @@ if (isCloud() && isPostHogEnabled) {
 }
 
 registerGlobalShortcuts();
+initStickyContext();
 
 const container = document.getElementById("root") as HTMLElement;
 const root = (container as any).__reactRoot ??= ReactDOM.createRoot(container);

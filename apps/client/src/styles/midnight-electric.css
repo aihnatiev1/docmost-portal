@@ -165,6 +165,27 @@
   --shadow-button-glow: var(--shadow-glow);
 }
 
+/* ── Density modes ─────────────────────────────── */
+[data-density="compact"] {
+  --sp-1: 3px; --sp-2: 6px; --sp-3: 9px; --sp-4: 12px;
+  --sp-5: 15px; --sp-6: 18px; --sp-8: 24px; --sp-10: 30px;
+  --sp-12: 36px; --sp-16: 48px; --sp-20: 60px; --sp-24: 72px;
+  --text-xs: 10px; --text-sm: 12px; --text-base: 14px;
+  --prose-line-height: 1.6;
+  --prose-paragraph-gap: 1em;
+  --prose-heading-gap: 1.5em;
+}
+
+[data-density="cozy"] {
+  --sp-1: 5px; --sp-2: 10px; --sp-3: 15px; --sp-4: 20px;
+  --sp-5: 25px; --sp-6: 30px; --sp-8: 40px; --sp-10: 50px;
+  --sp-12: 60px; --sp-16: 80px; --sp-20: 100px; --sp-24: 120px;
+  --text-base: 16px; --text-md: 18px;
+  --prose-line-height: 1.85;
+  --prose-paragraph-gap: 1.5em;
+  --prose-heading-gap: 2.5em;
+}
+
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
