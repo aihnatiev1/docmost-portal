@@ -118,4 +118,28 @@
   .mantine-AppShell-header {
     border-color: var(--border, #1E2230);
   }
+
+  /* Prose styles for documentation content */
+  .ProseMirror {
+    max-width: var(--prose-max-width, 680px);
+    line-height: var(--prose-line-height, 1.75);
+  }
+  .ProseMirror p {
+    margin-bottom: var(--prose-paragraph-gap, 1.25em);
+  }
+  .ProseMirror h1 { margin-top: var(--prose-heading-gap, 2em); margin-bottom: var(--prose-heading-bottom, 0.5em); }
+  .ProseMirror h2 { margin-top: calc(var(--prose-heading-gap, 2em) * 0.85); margin-bottom: var(--prose-heading-bottom, 0.5em); }
+  .ProseMirror h3 { margin-top: calc(var(--prose-heading-gap, 2em) * 0.7); margin-bottom: var(--prose-heading-bottom, 0.5em); }
+  .ProseMirror ul, .ProseMirror ol {
+    padding-left: var(--prose-list-indent, 1.5em);
+    margin-bottom: var(--prose-paragraph-gap, 1.25em);
+  }
+  .ProseMirror blockquote {
+    padding-left: var(--prose-blockquote-indent, 1.25em);
+    margin-bottom: var(--prose-paragraph-gap, 1.25em);
+  }
+  .ProseMirror hr {
+    border-color: var(--prose-hr-color, var(--border, #1E2230));
+    margin: var(--prose-heading-gap, 2em) 0;
+  }
 }

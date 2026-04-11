@@ -105,6 +105,64 @@
   --focus-ring:        0 0 0 3px rgba(99, 102, 241, 0.15);
   --focus-ring-strong: 0 0 0 3px rgba(99, 102, 241, 0.35);
   --focus-border:      var(--accent-indigo);
+
+  /* ── Prose / Content tokens ────────────────────── */
+  --prose-max-width: 680px;
+  --prose-line-height: 1.75;
+  --prose-paragraph-gap: 1.25em;
+  --prose-heading-gap: 2em;
+  --prose-heading-bottom: 0.5em;
+  --prose-list-indent: 1.5em;
+  --prose-blockquote-indent: 1.25em;
+  --prose-code-size: 0.875em;
+  --prose-hr-color: var(--border);
+
+  /* ── Semantic content colors ───────────────────── */
+  --color-primary: var(--accent-indigo);
+  --color-primary-light: var(--accent-indigo-2);
+  --color-link: var(--accent-indigo-2);
+  --color-link-hover: var(--accent-indigo);
+
+  --color-endpoint: #818CF8;
+  --color-param: var(--accent-violet-2);
+  --color-type: #7dd3a8;
+  --color-required: var(--danger);
+  --color-optional: var(--text-400);
+  --color-deprecated: #F59E0B;
+
+  --color-method-get: var(--success);
+  --color-method-post: var(--accent-indigo);
+  --color-method-put: var(--warning);
+  --color-method-patch: var(--warning);
+  --color-method-delete: var(--danger);
+  --color-method-head: var(--text-400);
+  --color-method-options: var(--text-400);
+
+  /* ── Token aliases (change here, applies everywhere) ── */
+  --color-bg-page: var(--bg-050);
+  --color-bg-card: var(--bg-100);
+  --color-bg-elevated: var(--bg-150);
+  --color-bg-input: var(--bg-050);
+  --color-bg-sidebar: var(--bg-000);
+  --color-bg-overlay: rgba(7, 8, 12, 0.6);
+
+  --color-text-primary: var(--text-100);
+  --color-text-secondary: var(--text-200);
+  --color-text-tertiary: var(--text-300);
+  --color-text-muted: var(--text-400);
+  --color-text-disabled: var(--text-500);
+
+  --color-border-default: var(--border);
+  --color-border-subtle: var(--border-soft);
+  --color-border-strong: var(--border-strong);
+
+  --color-focus: var(--accent-indigo);
+  --color-selection: var(--accent-violet);
+
+  --shadow-card: var(--shadow-sm);
+  --shadow-dropdown: var(--shadow-lg);
+  --shadow-modal: var(--shadow-xl);
+  --shadow-button-glow: var(--shadow-glow);
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }

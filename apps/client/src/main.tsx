@@ -4,6 +4,7 @@ import "@mantine/notifications/styles.css";
 import '@mantine/dates/styles.css';
 import "@/styles/midnight-electric.css";
 import "@/styles/midnight-overrides.css";
+import "@/styles/noise.css";
 
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
@@ -23,6 +24,7 @@ import {
   isPostHogEnabled,
 } from "@/lib/config.ts";
 import posthog from "posthog-js";
+import { registerGlobalShortcuts } from "@/lib/keyboard-shortcuts";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +45,8 @@ if (isCloud() && isPostHogEnabled) {
     capture_pageleave: false,
   });
 }
+
+registerGlobalShortcuts();
 
 const container = document.getElementById("root") as HTMLElement;
 const root = (container as any).__reactRoot ??= ReactDOM.createRoot(container);
