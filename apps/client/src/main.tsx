@@ -5,6 +5,7 @@ import '@mantine/dates/styles.css';
 import "@/styles/midnight-electric.css";
 import "@/styles/midnight-overrides.css";
 import "@/styles/noise.css";
+import "@/styles/empty-states.css";
 
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";

@@ -6,6 +6,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
+  /* ═══════════════════════════════════════════════
+     CORE TOKENS — reusable across any project
+     ═══════════════════════════════════════════════ */
+
   /* ── Surfaces ────────────────────────────────────── */
   --bg-000: #07080C;
   --bg-050: #0B0D12;
@@ -106,6 +110,10 @@
   --focus-ring-strong: 0 0 0 3px rgba(99, 102, 241, 0.35);
   --focus-border:      var(--accent-indigo);
 
+  /* ═══════════════════════════════════════════════
+     DOMAIN TOKENS — documentation platform specific
+     ═══════════════════════════════════════════════ */
+
   /* ── Prose / Content tokens ────────────────────── */
   --prose-max-width: 680px;
   --prose-line-height: 1.75;
@@ -163,6 +171,10 @@
   --shadow-dropdown: var(--shadow-lg);
   --shadow-modal: var(--shadow-xl);
   --shadow-button-glow: var(--shadow-glow);
+
+  /* ── Deprecated tokens (remove in v2.0) ────────── */
+  /* --accent-glow is replaced by --shadow-button-glow */
+  /* --gradient-soft is replaced by --color-bg-elevated with opacity */
 }
 
 /* ── Density modes ─────────────────────────────── */
@@ -184,6 +196,27 @@
   --prose-line-height: 1.85;
   --prose-paragraph-gap: 1.5em;
   --prose-heading-gap: 2.5em;
+}
+
+/* ── Feature variants ──────────────────────────── */
+[data-variant="reader"] {
+  --prose-max-width: 720px;
+  --prose-line-height: 1.85;
+  --prose-paragraph-gap: 1.4em;
+  --text-base: 16px;
+}
+
+[data-variant="editor"] {
+  --prose-max-width: 100%;
+  --prose-line-height: 1.65;
+  --prose-paragraph-gap: 1em;
+}
+
+[data-variant="api-reference"] {
+  --prose-max-width: 800px;
+  --prose-line-height: 1.65;
+  --prose-paragraph-gap: 1em;
+  --prose-heading-gap: 1.5em;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }

@@ -1,0 +1,65 @@
+/* Context-aware empty states for Midnight Electric */
+.me-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-16, 64px) var(--sp-8, 32px);
+  text-align: center;
+}
+
+.me-empty-state-icon {
+  width: 56px;
+  height: 56px;
+  margin-bottom: var(--sp-5, 20px);
+  border-radius: var(--r-lg, 12px);
+  background: var(--gradient-soft, linear-gradient(135deg, rgba(99,102,241,0.18), rgba(139,92,246,0.10)));
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-indigo-2, #818CF8);
+  font-size: 22px;
+  box-shadow: 0 0 32px -10px rgba(99, 102, 241, 0.3);
+}
+
+.me-empty-state-title {
+  font-family: var(--font-display, 'Bricolage Grotesque', sans-serif);
+  font-weight: 500;
+  font-size: var(--text-lg, 20px);
+  color: var(--text-100, #ECEEF2);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--sp-2, 8px);
+}
+
+.me-empty-state-description {
+  font-size: var(--text-sm, 13px);
+  color: var(--text-300, #8B92A5);
+  line-height: 1.6;
+  max-width: 320px;
+  margin-bottom: var(--sp-5, 20px);
+}
+
+/* Variants */
+.me-empty-state[data-variant="inline"] {
+  padding: var(--sp-8, 32px) var(--sp-4, 16px);
+}
+.me-empty-state[data-variant="inline"] .me-empty-state-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  margin-bottom: var(--sp-3, 12px);
+}
+
+.me-empty-state[data-variant="compact"] {
+  padding: var(--sp-4, 16px);
+  flex-direction: row;
+  gap: var(--sp-4, 16px);
+  text-align: left;
+}
+.me-empty-state[data-variant="compact"] .me-empty-state-icon {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+  margin-bottom: 0;
+}
