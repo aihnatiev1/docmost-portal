@@ -6,6 +6,10 @@ import "@/styles/midnight-electric.css";
 import "@/styles/midnight-overrides.css";
 import "@/styles/noise.css";
 import "@/styles/empty-states.css";
+import "@/styles/rich-tooltip.css";
+import "@/styles/optimistic-ui.css";
+import "@/styles/changelog.css";
+import "@/styles/illustrations.css";
 
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";

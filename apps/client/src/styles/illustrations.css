@@ -1,0 +1,54 @@
+/* Geometric abstract illustrations for empty states */
+.me-illustration {
+  width: 200px;
+  height: 140px;
+  margin: 0 auto var(--sp-6, 24px);
+  position: relative;
+  overflow: hidden;
+}
+
+.me-illustration-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 20px 20px;
+  position: absolute;
+  inset: 0;
+}
+
+.me-illustration-shape {
+  position: absolute;
+  border-radius: var(--r-lg, 12px);
+  opacity: 0.8;
+}
+
+.me-illustration-shape:nth-child(1) {
+  width: 80px; height: 60px;
+  top: 20px; left: 30px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.08));
+  border: 1px solid rgba(99,102,241,0.2);
+}
+.me-illustration-shape:nth-child(2) {
+  width: 50px; height: 50px;
+  top: 50px; right: 30px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(99,102,241,0.06));
+  border: 1px solid rgba(139,92,246,0.15);
+  border-radius: 50%;
+}
+.me-illustration-shape:nth-child(3) {
+  width: 100px; height: 3px;
+  bottom: 30px; left: 50px;
+  background: var(--gradient-primary);
+  border-radius: var(--r-full, 9999px);
+  opacity: 0.4;
+}
+
+/* Variants */
+.me-illustration[data-variant="error"] .me-illustration-shape:nth-child(1) {
+  background: linear-gradient(135deg, rgba(248,113,113,0.15), rgba(248,113,113,0.05));
+  border-color: rgba(248,113,113,0.2);
+}
+.me-illustration[data-variant="empty"] .me-illustration-shape:nth-child(1) {
+  border-style: dashed;
+  background: transparent;
+}
