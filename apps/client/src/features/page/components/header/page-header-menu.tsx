@@ -43,11 +43,6 @@ import { PageStateSegmentedControl } from "@/features/user/components/page-state
 import MovePageModal from "@/features/page/components/move-page-modal.tsx";
 import { useTimeAgo } from "@/hooks/use-time-ago.tsx";
 import { PageShareModal } from "@/ee/page-permission";
-import {
-  useWatchStatusQuery,
-  useWatchPageMutation,
-  useUnwatchPageMutation,
-} from "@/features/page/queries/watcher-query";
 
 interface PageHeaderMenuProps {
   readOnly?: boolean;
@@ -132,9 +127,6 @@ function PageActionMenu({ readOnly }: PageActionMenuProps) {
   ] = useDisclosure(false);
   const [pageEditor] = useAtom(pageEditorAtom);
   const pageUpdatedAt = useTimeAgo(page?.updatedAt);
-  const { data: watchStatus } = useWatchStatusQuery(page?.id);
-  const watchPage = useWatchPageMutation();
-  const unwatchPage = useUnwatchPageMutation();
 
   const handleCopyLink = () => {
     const pageUrl =
@@ -216,23 +208,6 @@ function PageActionMenu({ readOnly }: PageActionMenuProps) {
           >
             {t("Copy as Markdown")}
           </Menu.Item>
-
-          {watchStatus?.watching ? (
-            <Menu.Item
-              leftSection={<IconEyeOff size={16} />}
-              onClick={() => unwatchPage.mutate(page.id)}
-            >
-              {t("Stop watching")}
-            </Menu.Item>
-          ) : (
-            <Menu.Item
-              leftSection={<IconEye size={16} />}
-              onClick={() => watchPage.mutate(page.id)}
-            >
-              {t("Watch page")}
-            </Menu.Item>
-          )}
-
           <Menu.Divider />
 
           <Menu.Item leftSection={<IconArrowsHorizontal size={16} />}>

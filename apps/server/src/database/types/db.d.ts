@@ -240,10 +240,13 @@ export interface Pages {
   deletedById: string | null;
   icon: string | null;
   id: Generated<string>;
+  isDraft: Generated<boolean>;
   isLocked: Generated<boolean>;
   lastUpdatedById: string | null;
+  metaDescription: string | null;
   parentPageId: string | null;
   position: string | null;
+  publishAt: Timestamp | null;
   slugId: string;
   spaceId: string;
   textContent: string | null;
@@ -289,8 +292,10 @@ export interface Spaces {
   id: Generated<string>;
   logo: string | null;
   name: string | null;
+  portalSettings: Generated<JsonValue>;
   settings: Json | null;
   slug: string;
+  type: Generated<string>;
   updatedAt: Generated<Timestamp>;
   visibility: Generated<string>;
   workspaceId: string;
@@ -444,6 +449,31 @@ export interface UserSessions {
   createdAt: Generated<Timestamp>;
 }
 
+export interface PageFeedback {
+  id: Generated<string>;
+  pageId: string;
+  isHelpful: boolean;
+  comment: string | null;
+  ipHash: string | null;
+  createdAt: Generated<Timestamp>;
+}
+
+export interface PageViews {
+  id: Generated<string>;
+  pageId: string;
+  spaceId: string;
+  referrer: string | null;
+  userAgentHash: string | null;
+  createdAt: Generated<Timestamp>;
+}
+
+export interface SpaceTranslations {
+  id: Generated<string>;
+  sourceSpaceId: string;
+  targetSpaceId: string;
+  locale: string;
+}
+
 export interface DB {
   apiKeys: ApiKeys;
   attachments: Attachments;
@@ -458,11 +488,14 @@ export interface DB {
   groupUsers: GroupUsers;
   notifications: Notifications;
   pageAccess: PageAccess;
+  pageFeedback: PageFeedback;
   pagePermissions: PagePermissions;
   pageHistory: PageHistory;
+  pageViews: PageViews;
   pages: Pages;
   shares: Shares;
   spaceMembers: SpaceMembers;
+  spaceTranslations: SpaceTranslations;
   spaces: Spaces;
   userMfa: UserMfa;
   users: Users;

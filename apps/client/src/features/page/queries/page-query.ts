@@ -111,7 +111,15 @@ export function useUpdatePageMutation() {
   return useMutation<IPage, Error, Partial<IPageInput>>({
     mutationFn: (data) => updatePage(data),
     onSuccess: (data) => {
-      updatePageData(data);
+      updatePage(data);
+
+      invalidateOnUpdatePage(
+        data.spaceId,
+        data.parentPageId,
+        data.id,
+        data.title,
+        data.icon,
+      );
     },
   });
 }

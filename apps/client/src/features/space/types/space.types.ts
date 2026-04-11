@@ -18,6 +18,44 @@ export interface ISpaceSettings {
   comments?: ISpaceCommentsSettings;
 }
 
+export interface IPortalSettings {
+  logo?: string;
+  logoDark?: string;
+  favicon?: string;
+  title?: string;
+  description?: string;
+  theme?: {
+    preset?: string;
+    primaryColor?: string;
+    accentColor?: string;
+    fontFamily?: string;
+    codeFontFamily?: string;
+    cornerStyle?: string;
+    tintStyle?: string;
+    sidebarBackground?: string;
+    sidebarListStyle?: string;
+  };
+  headerEnabled?: boolean;
+  paginationEnabled?: boolean;
+  footerEnabled?: boolean;
+  customDomain?: string;
+  analyticsId?: string;
+  customCss?: string;
+  footerLinks?: Array<{ label: string; url: string }>;
+  locales?: string[];
+  socialPreviewImage?: string;
+  pageRatingsEnabled?: boolean;
+  announcementEnabled?: boolean;
+  announcementText?: string;
+  announcementUrl?: string;
+  sidebarInserts?: any[];
+  externalLinksTarget?: "same_tab" | "new_tab";
+  navigationItems?: Array<{ label: string; url: string; type: string }>;
+  searchBarStyle?: string;
+  primaryLink?: string;
+  privacyPolicyUrl?: string;
+}
+
 export interface ISpace {
   id: string;
   name: string;
@@ -32,6 +70,8 @@ export interface ISpace {
   spaceId?: string;
   membership?: IMembership;
   settings?: ISpaceSettings;
+  type?: string;
+  portalSettings?: IPortalSettings;
   // for updates
   disablePublicSharing?: boolean;
   allowViewerComments?: boolean;

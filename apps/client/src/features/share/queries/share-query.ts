@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { notifications } from "@mantine/notifications";
 import { useTranslation } from "react-i18next";
+import { useState, useEffect } from "react";
 import {
   ICreateShare,
   IShare,
@@ -66,10 +67,18 @@ export function useSharePageQuery(
 export function useShareForPageQuery(
   pageId: string,
 ): UseQueryResult<IShareForPage, Error> {
+  // Delay this query to avoid HTTP/1.1 head-of-line blocking
+  // when many concurrent requests are sent on page load
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setReady(true), 500);
+    return () => clearTimeout(timer);
+  }, [pageId]);
+
   const query = useQuery({
     queryKey: ["share-for-page", pageId],
     queryFn: () => getShareForPage(pageId),
-    enabled: !!pageId,
+    enabled: !!pageId && ready,
     staleTime: 60 * 1000,
     retry: false,
   });
