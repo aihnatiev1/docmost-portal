@@ -14,36 +14,27 @@
 
 ## ✅ Done (v1.2)
 
-### Architecture
-- [x] **Core + Domain layers** — Section headers separating core tokens (reusable) from domain tokens (docs-specific)
-- [x] **Feature flags / variants** — `data-variant="reader|editor|api-reference"` with scoped token overrides
-- [x] **Density modes** — `data-density="compact|cozy"` with scaled spacing/text tokens
+- [x] **Core + Domain layers** — Section headers separating core from domain tokens
+- [x] **Feature flags / variants** — `data-variant="reader|editor|api-reference"`
+- [x] **Density modes** — `data-density="compact|cozy"`
+- [x] **Sticky context** — Floating header showing current section
+- [x] **Extended keyboard shortcuts** — g→h, g→d, /, ?, j/k
+- [x] **Context-aware empty states** — default/inline/compact variants
+- [x] **Token versioning** — Deprecation markers
+- [x] **CONTRIBUTING.md** — Component workflow guide
 
-### UX Patterns
-- [x] **Sticky context** — Floating header showing current section on scroll
-- [x] **Extended keyboard shortcuts** — `g→h` home, `g→d` docs, `/` search, `?` help overlay, j/k scroll
-- [x] **Context-aware empty states** — CSS patterns: default/inline/compact variants
+## ✅ Done (v1.3)
 
-### Infrastructure
-- [x] **Token versioning** — Deprecation markers for `--accent-glow`, `--gradient-soft`
-- [x] **CONTRIBUTING.md** — Component proposal → review → merge workflow, naming conventions
+- [x] **Inline RichTooltip** — Hover tooltips with code, links, lists
+- [x] **Optimistic UI patterns** — Spinner, saved badge, diff badge, undo action
+- [x] **Presence indicators** — Avatar bar with overlap, status dots, count
+- [x] **Reading font** — Literata (serif) via `--font-reading` token
+- [x] **Illustrations** — Geometric SVG shapes for empty states (error/empty variants)
+- [x] **Changelog timeline** — Vertical line with typed dots (feature/fix/breaking)
 
-## 🔜 Next (v1.3)
+## 🔜 Future (v2.0)
 
-### UX Patterns
-- [ ] **Inline RichTooltip** — Markdown-rendered tooltips with code, links, lists
-- [ ] **Optimistic UI patterns** — Inline spinners, "saved 2s ago" badges, undo toasts
-- [ ] **Presence indicators** — Avatar bar with live dots, inline cursors
-
-### Visual Language
-- [ ] **Reading font** — Source Serif Pro / Literata for article prose (optional toggle)
-- [ ] **Illustrations** — Geometric SVG compositions for empty states, errors, onboarding
-
-### Infrastructure
 - [ ] **Component playground** — Interactive props editor with live preview + copy snippet
 - [ ] **Migration guides** — v1 → v2 guide with codemods
-
-### Strategic
-- [ ] **Public demo landing** — midnight-electric.dev with hero, features, getting started
+- [ ] **Public demo landing** — midnight-electric.dev
 - [ ] **Version selector** — API version dropdown (v1/v2/v3)
-- [ ] **Changelog timeline** — Vertical changelog with date grouping, diff highlighting
