@@ -50,6 +50,9 @@ import {
   Columns,
   Column,
   Status,
+  ApiMethod,
+  ApiEndpoint,
+  ApiParams,
 } from "@docmost/editor-ext";
 import {
   randomElement,
@@ -373,6 +376,9 @@ export const mainExtensions = [
   }).configure(),
   Columns,
   Column,
+  ApiMethod,
+  ApiEndpoint,
+  ApiParams,
   AutoJoiner.configure({
     elementsToJoin: [],
   }),

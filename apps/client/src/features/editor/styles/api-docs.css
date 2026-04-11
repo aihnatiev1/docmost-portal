@@ -1,0 +1,165 @@
+/* ============================================================
+   API Documentation Components — Midnight Electric Theme
+   ============================================================ */
+
+/* --- Method Badge (inline) --- */
+
+.api-method {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: var(--me-font-mono, "JetBrains Mono", "Fira Code", ui-monospace, monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  vertical-align: baseline;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.api-method-get {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34D399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.api-method-post {
+  background: rgba(99, 102, 241, 0.15);
+  color: #6366F1;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.api-method-put {
+  background: rgba(251, 191, 36, 0.15);
+  color: #FBBF24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.api-method-patch {
+  background: rgba(251, 191, 36, 0.15);
+  color: #FBBF24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.api-method-delete {
+  background: rgba(248, 113, 113, 0.15);
+  color: #F87171;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.api-method-head,
+.api-method-options {
+  background: rgba(139, 146, 165, 0.15);
+  color: #8B92A5;
+  border: 1px solid rgba(139, 146, 165, 0.3);
+}
+
+/* --- API Endpoint (block) --- */
+
+.api-endpoint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  border-radius: 8px;
+  background: var(--me-surface-secondary, rgba(99, 102, 241, 0.06));
+  border: 1px solid var(--me-border-subtle, rgba(99, 102, 241, 0.15));
+  font-family: var(--me-font-mono, "JetBrains Mono", "Fira Code", ui-monospace, monospace);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+.api-endpoint .api-method {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+}
+
+.api-endpoint-url {
+  color: var(--me-text-primary, #E2E8F0);
+  word-break: break-all;
+}
+
+.api-endpoint-param {
+  color: #A78BFA;
+  font-weight: 600;
+}
+
+/* Selected state in editor */
+.api-endpoint.ProseMirror-selectednode {
+  box-shadow: 0 0 0 2px var(--mantine-color-blue-7, #3B82F6);
+}
+
+/* --- API Params Table (block) --- */
+
+.api-params {
+  margin: 8px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--me-border-subtle, rgba(99, 102, 241, 0.15));
+}
+
+.api-params.ProseMirror-selectednode {
+  box-shadow: 0 0 0 2px var(--mantine-color-blue-7, #3B82F6);
+}
+
+.api-params-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.api-params-th {
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--me-text-secondary, #8B92A5);
+  background: var(--me-surface-secondary, rgba(99, 102, 241, 0.06));
+  border-bottom: 1px solid var(--me-border-subtle, rgba(99, 102, 241, 0.15));
+}
+
+.api-params-td {
+  padding: 10px 14px;
+  color: var(--me-text-primary, #E2E8F0);
+  border-bottom: 1px solid var(--me-border-subtle, rgba(99, 102, 241, 0.08));
+}
+
+.api-params-table tbody tr:last-child .api-params-td {
+  border-bottom: none;
+}
+
+.api-params-name code {
+  color: #A78BFA;
+  background: rgba(167, 139, 250, 0.1);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--me-font-mono, "JetBrains Mono", "Fira Code", ui-monospace, monospace);
+  font-size: 0.8125rem;
+}
+
+.api-params-type code {
+  color: #34D399;
+  background: rgba(52, 211, 153, 0.1);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--me-font-mono, "JetBrains Mono", "Fira Code", ui-monospace, monospace);
+  font-size: 0.8125rem;
+}
+
+.api-params-required {
+  font-weight: 600;
+  color: #FBBF24;
+}
+
+.api-params-table tbody tr:hover {
+  background: var(--me-surface-hover, rgba(99, 102, 241, 0.04));
+}
