@@ -25,6 +25,9 @@ import {
   IconColumns3,
   IconColumns2,
   IconTag,
+  IconApi,
+  IconRoute,
+  IconListDetails,
 } from "@tabler/icons-react";
 import {
   CommandProps,
@@ -680,6 +683,56 @@ const CommandGroups: SlashMenuGroupedItemsType = {
           .focus()
           .deleteRange(range)
           .setEmbed({ provider: "gsheets" })
+          .run();
+      },
+    },
+
+    // ── API Documentation ──
+    {
+      title: "API Endpoint",
+      description: "HTTP method + URL with parameter highlighting.",
+      searchTerms: ["api", "endpoint", "http", "request", "url", "rest"],
+      icon: IconRoute,
+      separator: true,
+      command: ({ editor, range }: CommandProps) => {
+        editor
+          .chain()
+          .focus()
+          .deleteRange(range)
+          .setApiEndpoint({ method: "GET", url: "/api/v1/resource/{id}" })
+          .run();
+      },
+    },
+    {
+      title: "API Method",
+      description: "Inline HTTP method badge (GET, POST, DELETE…).",
+      searchTerms: ["api", "method", "http", "get", "post", "put", "delete", "badge"],
+      icon: IconApi,
+      command: ({ editor, range }: CommandProps) => {
+        editor
+          .chain()
+          .focus()
+          .deleteRange(range)
+          .setApiMethod({ method: "GET" })
+          .run();
+      },
+    },
+    {
+      title: "API Parameters",
+      description: "Parameter table with Name, Type, Required, Description.",
+      searchTerms: ["api", "params", "parameters", "table", "schema", "fields"],
+      icon: IconListDetails,
+      command: ({ editor, range }: CommandProps) => {
+        editor
+          .chain()
+          .focus()
+          .deleteRange(range)
+          .setApiParams({
+            params: JSON.stringify([
+              { name: "id", type: "string", required: true, description: "Resource identifier" },
+              { name: "limit", type: "integer", required: false, description: "Maximum number of results" },
+            ]),
+          })
           .run();
       },
     },
