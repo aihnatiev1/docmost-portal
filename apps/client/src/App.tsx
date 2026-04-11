@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import DocsPortalLayout from "@/features/docs-portal/layout/DocsPortalLayout";
 import SetupWorkspace from "@/pages/auth/setup-workspace.tsx";
 import LoginPage from "@/pages/auth/login";
 import Home from "@/pages/dashboard/home";
@@ -78,6 +79,21 @@ export default function App() {
 
         <Route path={"/share/:shareId"} element={<ShareRedirect />} />
         <Route path={"/p/:pageSlug"} element={<PageRedirect />} />
+
+        {/* Documentation Portal - public routes */}
+        <Route path={"/docs/:spaceSlug"} element={<DocsPortalLayout />} />
+        <Route
+          path={"/docs/:spaceSlug/:pageSlug"}
+          element={<DocsPortalLayout />}
+        />
+        <Route
+          path={"/:locale/docs/:spaceSlug"}
+          element={<DocsPortalLayout />}
+        />
+        <Route
+          path={"/:locale/docs/:spaceSlug/:pageSlug"}
+          element={<DocsPortalLayout />}
+        />
 
         <Route element={<Layout />}>
           <Route path={"/home"} element={<Home />} />

@@ -23,6 +23,16 @@ export class DocsPortalSeoController {
     @Param('spaceSlug') spaceSlug: string,
     @Param('pageSlug') pageSlug?: string,
   ) {
+    return this.renderDocsPage(res, req, spaceSlug, pageSlug);
+  }
+
+  async renderDocsPage(
+    res: FastifyReply,
+    req: FastifyRequest,
+    spaceSlug: string,
+    pageSlug?: string,
+    locale?: string,
+  ) {
     let workspace: Workspace = null;
     if (this.environmentService.isSelfHosted()) {
       workspace = await this.workspaceRepo.findFirst();
@@ -52,13 +62,14 @@ export class DocsPortalSeoController {
       return this.sendIndex(indexFilePath, res);
     }
 
+    const localePrefix = locale ? `/${locale}` : '';
+    const appUrl = process.env.APP_URL || '';
+
     try {
       let metaTitle = 'Documentation';
       let metaDescription = '';
-      let canonicalUrl = `${process.env.APP_URL || ''}/docs/${spaceSlug}`;
+      let canonicalUrl = `${appUrl}${localePrefix}/docs/${spaceSlug}`;
       let jsonLd = '';
-      let pageUpdatedAt: string | null = null;
-      let pageCreatedAt: string | null = null;
 
       if (pageSlug) {
         const result = await this.docsPortalService.getDocPage(
@@ -71,15 +82,15 @@ export class DocsPortalSeoController {
         metaTitle =
           rawTitle.length > 80 ? `${rawTitle.slice(0, 77)}…` : rawTitle;
         metaDescription = result.page.metaDescription || '';
-        canonicalUrl = `${process.env.APP_URL || ''}/docs/${spaceSlug}/${pageSlug}`;
-        pageUpdatedAt = result.page.updatedAt
+        canonicalUrl = `${appUrl}${localePrefix}/docs/${spaceSlug}/${pageSlug}`;
+
+        const pageUpdatedAt = result.page.updatedAt
           ? new Date(result.page.updatedAt).toISOString()
           : null;
-        pageCreatedAt = result.page.createdAt
+        const pageCreatedAt = result.page.createdAt
           ? new Date(result.page.createdAt).toISOString()
           : null;
 
-        // JSON-LD: Article schema for page
         const articleJsonLd: Record<string, any> = {
           '@context': 'https://schema.org',
           '@type': 'TechArticle',
@@ -88,6 +99,7 @@ export class DocsPortalSeoController {
           ...(metaDescription && { description: metaDescription }),
           ...(pageCreatedAt && { datePublished: pageCreatedAt }),
           ...(pageUpdatedAt && { dateModified: pageUpdatedAt }),
+          ...(locale && { inLanguage: locale }),
           publisher: {
             '@type': 'Organization',
             name: workspace.name || 'Documentation',
@@ -95,7 +107,7 @@ export class DocsPortalSeoController {
           isPartOf: {
             '@type': 'WebSite',
             name: result.space?.name || spaceSlug,
-            url: `${process.env.APP_URL || ''}/docs/${spaceSlug}`,
+            url: `${appUrl}${localePrefix}/docs/${spaceSlug}`,
           },
         };
         jsonLd = `<script type="application/ld+json">${JSON.stringify(articleJsonLd)}</script>`;
@@ -107,13 +119,13 @@ export class DocsPortalSeoController {
         metaTitle = htmlEscape(space.name || 'Documentation');
         metaDescription = space.description || '';
 
-        // JSON-LD: WebSite schema for space index
         const websiteJsonLd: Record<string, any> = {
           '@context': 'https://schema.org',
           '@type': 'WebSite',
           name: space.name || 'Documentation',
           url: canonicalUrl,
           ...(metaDescription && { description: metaDescription }),
+          ...(locale && { inLanguage: locale }),
           publisher: {
             '@type': 'Organization',
             name: workspace.name || 'Documentation',
@@ -132,6 +144,7 @@ export class DocsPortalSeoController {
         `<meta property="og:description" content="${htmlEscape(metaDescription)}" />`,
         `<meta property="og:type" content="article" />`,
         `<meta property="og:url" content="${canonicalUrl}" />`,
+        locale ? `<meta property="og:locale" content="${htmlEscape(locale)}" />` : '',
         `<meta name="twitter:title" content="${metaTitle}" />`,
         `<meta name="twitter:description" content="${htmlEscape(metaDescription)}" />`,
         `<link rel="canonical" href="${canonicalUrl}" />`,
@@ -154,5 +167,31 @@ export class DocsPortalSeoController {
   private sendIndex(indexFilePath: string, res: FastifyReply) {
     const stream = fs.createReadStream(indexFilePath);
     res.type('text/html').send(stream);
+  }
+}
+
+@Controller()
+export class DocsPortalLocaleSeoController {
+  constructor(
+    private readonly docsPortalService: DocsPortalService,
+    private workspaceRepo: WorkspaceRepo,
+    private environmentService: EnvironmentService,
+  ) {}
+
+  @Get([':locale/docs/:spaceSlug', ':locale/docs/:spaceSlug/:pageSlug'])
+  async getLocalizedDocsPage(
+    @Res({ passthrough: false }) res: FastifyReply,
+    @Req() req: FastifyRequest,
+    @Param('locale') locale: string,
+    @Param('spaceSlug') spaceSlug: string,
+    @Param('pageSlug') pageSlug?: string,
+  ) {
+    // Reuse the same render logic with locale
+    const seo = new DocsPortalSeoController(
+      this.docsPortalService,
+      this.workspaceRepo,
+      this.environmentService,
+    );
+    return seo.renderDocsPage(res, req, spaceSlug, pageSlug, locale);
   }
 }
