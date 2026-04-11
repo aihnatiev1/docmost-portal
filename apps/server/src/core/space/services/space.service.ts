@@ -213,12 +213,20 @@ export class SpaceService {
         );
       }
 
+      const updateData: Record<string, any> = {
+        name: updateSpaceDto.name,
+        description: updateSpaceDto.description,
+        slug: updateSpaceDto.slug,
+      };
+      if (typeof updateSpaceDto.type !== 'undefined') {
+        updateData.type = updateSpaceDto.type;
+      }
+      if (typeof updateSpaceDto.portalSettings !== 'undefined') {
+        updateData.portalSettings = updateSpaceDto.portalSettings;
+      }
+
       updatedSpace = await this.spaceRepo.updateSpace(
-        {
-          name: updateSpaceDto.name,
-          description: updateSpaceDto.description,
-          slug: updateSpaceDto.slug,
-        },
+        updateData,
         updateSpaceDto.spaceId,
         workspaceId,
         trx,

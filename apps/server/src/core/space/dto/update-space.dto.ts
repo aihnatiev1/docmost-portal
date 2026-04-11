@@ -15,4 +15,11 @@ export class UpdateSpaceDto extends PartialType(CreateSpaceDto) {
   @IsOptional()
   @IsBoolean()
   allowViewerComments: boolean;
+
+  @IsOptional()
+  @IsString()
+  type: string;
+
+  @IsOptional()
+  portalSettings: any;
 }

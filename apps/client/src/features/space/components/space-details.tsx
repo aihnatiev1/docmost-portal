@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { useSpaceQuery } from "@/features/space/queries/space-query.ts";
+import { useSpaceQuery, useUpdateSpaceMutation } from "@/features/space/queries/space-query.ts";
 import { EditSpaceForm } from "@/features/space/components/edit-space-form.tsx";
-import { Button, Divider, Text } from "@mantine/core";
+import { Button, Divider, Text, Switch, Group, Badge, CopyButton, ActionIcon, Tooltip, Code } from "@mantine/core";
+import { IconWorld, IconCopy, IconCheck, IconExternalLink } from "@tabler/icons-react";
 import DeleteSpaceModal from "./delete-space-modal";
 import { useDisclosure } from "@mantine/hooks";
 import ExportModal from "@/components/common/export-modal.tsx";
+import { PortalSettingsForm } from "@/features/space/components/portal-settings-form.tsx";
+import { notifications } from "@mantine/notifications";
 import AvatarUploader from "@/components/common/avatar-uploader.tsx";
 import {
   uploadSpaceIcon,
@@ -88,6 +91,26 @@ export default function SpaceDetails({ spaceId, readOnly }: SpaceDetailsProps) {
 
           <EditSpaceForm space={space} readOnly={readOnly} />
 
+          {/* Public Documentation Portal toggle */}
+          {!readOnly && (
+            <>
+              <Divider my="lg" />
+              <PublicPortalToggle space={space} />
+            </>
+          )}
+
+          {/* Portal Settings — shown when type=documentation */}
+          {space.type === "documentation" && !readOnly && (
+            <>
+              <Divider my="lg" />
+              <PortalSettingsForm
+                spaceId={space.id}
+                portalSettings={space.portalSettings || {}}
+                spaceSlug={space.slug}
+              />
+            </>
+          )}
+
           {!readOnly && (
             <>
               <Divider my="lg" />
@@ -129,5 +152,74 @@ export default function SpaceDetails({ spaceId, readOnly }: SpaceDetailsProps) {
         </div>
       )}
     </>
+  );
+}
+
+function PublicPortalToggle({ space }: { space: any }) {
+  const { t } = useTranslation();
+  const updateMutation = useUpdateSpaceMutation();
+  const isDocumentation = space.type === "documentation";
+  const portalUrl = `${window.location.origin}/docs/${space.slug}`;
+
+  const handleToggle = () => {
+    const newType = isDocumentation ? "default" : "documentation";
+    updateMutation.mutate(
+      { spaceId: space.id, type: newType } as any,
+      {
+        onSuccess: () => {
+          notifications.show({
+            message: newType === "documentation"
+              ? t("Public portal enabled")
+              : t("Public portal disabled"),
+          });
+        },
+      },
+    );
+  };
+
+  return (
+    <div>
+      <Group justify="space-between" align="flex-start">
+        <div>
+          <Group gap="xs" mb={4}>
+            <IconWorld size={18} style={{ color: "var(--accent-indigo, #6366F1)" }} />
+            <Text fw={600}>{t("Public documentation portal")}</Text>
+          </Group>
+          <Text size="sm" c="dimmed" maw={400}>
+            {t("Make all pages in this space publicly accessible without login. Draft pages remain hidden.")}
+          </Text>
+        </div>
+        <Switch
+          checked={isDocumentation}
+          onChange={handleToggle}
+          size="md"
+          color="indigo"
+          disabled={updateMutation.isPending}
+        />
+      </Group>
+
+      {isDocumentation && (
+        <Group mt="md" gap="xs">
+          <Badge variant="light" color="green" size="sm">
+            {t("Live")}
+          </Badge>
+          <Code style={{ flex: 1, fontSize: 12 }}>{portalUrl}</Code>
+          <CopyButton value={portalUrl}>
+            {({ copied, copy }) => (
+              <Tooltip label={copied ? t("Copied") : t("Copy link")}>
+                <ActionIcon variant="subtle" color={copied ? "green" : "gray"} onClick={copy} size="sm">
+                  {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
+                </ActionIcon>
+              </Tooltip>
+            )}
+          </CopyButton>
+          <Tooltip label={t("Open portal")}>
+            <ActionIcon variant="subtle" color="gray" component="a" href={portalUrl} target="_blank" size="sm">
+              <IconExternalLink size={14} />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
+      )}
+    </div>
   );
 }
