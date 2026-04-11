@@ -220,6 +220,115 @@ function buildThemeStyles(ps: IPortalSettings): string {
     `);
   }
 
+  // Midnight Electric preset — full dark premium theme
+  if (theme.preset === "midnight") {
+    parts.push(`
+      .docs-portal {
+        --docs-primary: #6366F1;
+        --docs-accent: #8B5CF6;
+        font-family: 'DM Sans', var(--mantine-font-family);
+        -webkit-font-smoothing: antialiased;
+      }
+      .docs-portal .${classes.header} {
+        background: #07080C !important;
+        border-bottom: 1px solid #1E2230 !important;
+      }
+      .docs-portal .${classes.brandTitle} {
+        color: #ECEEF2 !important;
+        font-family: 'Bricolage Grotesque', sans-serif !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.02em !important;
+      }
+      .docs-portal .${classes.navbar} {
+        background: #07080C !important;
+        border-right: 1px solid #1E2230 !important;
+      }
+      .docs-portal .${classes.navItem} {
+        color: #8B92A5 !important;
+        transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+      }
+      .docs-portal .${classes.navItem}:hover {
+        background: #0F1219 !important;
+        color: #C2C6D4 !important;
+      }
+      .docs-portal .${classes.navItemActive} {
+        background: linear-gradient(90deg, rgba(99,102,241,0.14), transparent 75%) !important;
+        color: #ECEEF2 !important;
+        border-left: 2px solid #6366F1 !important;
+        font-weight: 500 !important;
+      }
+      .docs-portal .${classes.navItemActive} .${classes.navItemIcon} {
+        color: #818CF8 !important;
+      }
+      .docs-portal .${classes.searchTrigger} {
+        background: #0F1219 !important;
+        border: 1px solid #1E2230 !important;
+        color: #5C6475 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+      }
+      .docs-portal .ProseMirror {
+        color: #C2C6D4 !important;
+        font-family: 'DM Sans', sans-serif !important;
+        font-size: 15px !important;
+        line-height: 1.7 !important;
+      }
+      .docs-portal .ProseMirror h1,
+      .docs-portal .ProseMirror h2,
+      .docs-portal .ProseMirror h3 {
+        font-family: 'Bricolage Grotesque', sans-serif !important;
+        font-weight: 500 !important;
+        color: #ECEEF2 !important;
+        letter-spacing: -0.02em !important;
+      }
+      .docs-portal .ProseMirror code {
+        font-family: 'JetBrains Mono', monospace !important;
+        background: #0F1219 !important;
+        border: 1px solid #1E2230 !important;
+        color: #818CF8 !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        font-size: 13px !important;
+      }
+      .docs-portal .ProseMirror pre {
+        background: #07080C !important;
+        border: 1px solid #1E2230 !important;
+        border-radius: 8px !important;
+      }
+      .docs-portal .ProseMirror a {
+        color: #818CF8 !important;
+        border-bottom: 1px solid rgba(129,140,248,0.3) !important;
+      }
+      .docs-portal .ProseMirror blockquote {
+        border-left: 3px solid #6366F1 !important;
+        background: rgba(99,102,241,0.06) !important;
+      }
+      .docs-portal .ProseMirror table th {
+        background: #0F1219 !important;
+        color: #8B92A5 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 11px !important;
+        text-transform: uppercase !important;
+      }
+      .docs-portal .ProseMirror table td {
+        border-color: #1E2230 !important;
+      }
+      .docs-portal .${classes.pageNavCard} {
+        background: #0F1219 !important;
+        border: 1px solid #1E2230 !important;
+      }
+      .docs-portal .${classes.pageNavCard}:hover {
+        border-color: rgba(99,102,241,0.4) !important;
+        box-shadow: 0 0 20px -8px rgba(99,102,241,0.2) !important;
+      }
+      .docs-portal .${classes.breadcrumbLink} { color: #8B92A5 !important; }
+      .docs-portal .${classes.breadcrumbLink}:hover { color: #ECEEF2 !important; }
+      .docs-portal .${classes.searchShortcut} {
+        color: #818CF8 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+      }
+    `);
+  }
+
   // Corner style
   if (theme.cornerStyle === "sharp") {
     parts.push(`

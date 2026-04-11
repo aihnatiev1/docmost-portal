@@ -2,6 +2,8 @@ import "@mantine/core/styles.css";
 import "@mantine/spotlight/styles.css";
 import "@mantine/notifications/styles.css";
 import '@mantine/dates/styles.css';
+import "@/styles/midnight-electric.css";
+import "@/styles/midnight-overrides.css";
 
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";

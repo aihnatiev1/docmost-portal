@@ -80,6 +80,12 @@ const THEME_PRESETS = [
     description: "Colorful gradient accents",
     colors: ["#f8f9fa", "#e7f5ff", "#4c6ef5"],
   },
+  {
+    value: "midnight" as const,
+    label: "Midnight Electric",
+    description: "Dark premium — indigo & violet",
+    colors: ["#0B0D12", "#13161D", "#6366F1"],
+  },
 ];
 
 const COLOR_SWATCHES = [

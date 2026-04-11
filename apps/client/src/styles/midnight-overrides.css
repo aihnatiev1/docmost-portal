@@ -1,0 +1,121 @@
+/* Midnight Electric — Global Overrides for Mantine UI */
+
+/* Selection */
+::selection {
+  background: var(--accent-violet, #8B5CF6);
+  color: #fff;
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(99, 102, 241, 0.15));
+}
+
+/* Scrollbar (dark) */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-000, #07080C);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--bg-300, #1C2029);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--bg-400, #242834);
+  }
+}
+
+[data-mantine-color-scheme="dark"] {
+  /* Scrollbar */
+  ::-webkit-scrollbar-track {
+    background: var(--bg-000, #07080C);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--bg-300, #1C2029);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--bg-400, #242834);
+  }
+
+  /* Mantine Button primary — gradient */
+  .mantine-Button-root[data-variant="filled"] {
+    background: var(--gradient-primary, linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%));
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset, 0 4px 16px -4px rgba(99,102,241,0.5);
+    border: none;
+  }
+  .mantine-Button-root[data-variant="filled"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset, 0 6px 20px -4px rgba(99,102,241,0.6);
+  }
+
+  /* Mantine Input focus */
+  .mantine-Input-input:focus,
+  .mantine-Input-input:focus-within {
+    border-color: var(--accent-indigo, #6366F1);
+    box-shadow: var(--focus-ring, 0 0 0 3px rgba(99, 102, 241, 0.15));
+  }
+
+  /* Mantine NavLink active */
+  .mantine-NavLink-root[data-active] {
+    background: linear-gradient(90deg, rgba(99,102,241,0.14), transparent 75%);
+  }
+
+  /* Mantine Modal */
+  .mantine-Modal-content {
+    background: var(--bg-150, #13161D);
+    border: 1px solid var(--border-strong, #2A2F3E);
+    box-shadow: var(--shadow-xl, 0 40px 80px -24px rgba(0,0,0,0.75)), 0 0 60px -20px rgba(99,102,241,0.2);
+  }
+  .mantine-Modal-overlay {
+    backdrop-filter: blur(8px);
+  }
+
+  /* Mantine Menu dropdown */
+  .mantine-Menu-dropdown {
+    background: var(--bg-150, #13161D);
+    border: 1px solid var(--border-strong, #2A2F3E);
+    box-shadow: var(--shadow-lg, 0 24px 48px -16px rgba(0,0,0,0.65));
+  }
+
+  /* Mantine Tooltip */
+  .mantine-Tooltip-tooltip {
+    background: var(--bg-000, #07080C);
+    border: 1px solid var(--border-strong, #2A2F3E);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Mantine Badge */
+  .mantine-Badge-root {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 10px;
+    letter-spacing: 0.03em;
+  }
+
+  /* Mantine Card / Paper */
+  .mantine-Paper-root {
+    border-color: var(--border, #1E2230);
+  }
+
+  /* Mantine Notification */
+  .mantine-Notification-root {
+    background: var(--bg-150, #13161D);
+    border: 1px solid var(--border-strong, #2A2F3E);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Sidebar nav link */
+  .mantine-AppShell-navbar {
+    background: var(--bg-000, #07080C);
+    border-color: var(--border, #1E2230);
+  }
+
+  .mantine-AppShell-header {
+    border-color: var(--border, #1E2230);
+  }
+}
