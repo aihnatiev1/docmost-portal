@@ -49,7 +49,7 @@ const root = (container as any).__reactRoot ??= ReactDOM.createRoot(container);
 
 root.render(
   <BrowserRouter>
-    <MantineProvider theme={theme} cssVariablesResolver={mantineCssResolver} defaultColorScheme="dark">
+    <MantineProvider theme={theme} cssVariablesResolver={mantineCssResolver} forceColorScheme="dark">
       <ModalsProvider>
         <QueryClientProvider client={queryClient}>
           <Notifications position="bottom-center" limit={3} zIndex={10000} />

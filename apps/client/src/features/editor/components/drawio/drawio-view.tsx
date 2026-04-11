@@ -5,7 +5,6 @@ import {
   LoadingOverlay,
   Modal,
   Text,
-  useComputedColorScheme,
 } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { uploadFile } from "@/features/page/services/page-service.ts";
@@ -32,7 +31,6 @@ export default function DrawioView(props: NodeViewProps) {
   const drawioRef = useRef<DrawIoEmbedRef>(null);
   const [initialXML, setInitialXML] = useState<string>("");
   const [opened, { open, close }] = useDisclosure(false);
-  const computedColorScheme = useComputedColorScheme();
   const isDirtyRef = useRef(false);
   const isSavingRef = useRef(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -149,7 +147,7 @@ export default function DrawioView(props: NodeViewProps) {
                 baseUrl={getDrawioUrl()}
                 autosave
                 urlParameters={{
-                  ui: computedColorScheme === "light" ? "kennedy" : "dark",
+                  ui: "dark",
                   spin: true,
                   libraries: true,
                   saveAndExit: true,

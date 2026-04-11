@@ -3,7 +3,6 @@ import {
   ActionIcon,
   Popover,
   Button,
-  useMantineColorScheme,
 } from "@mantine/core";
 import { useClickOutside, useDisclosure, useWindowEvent } from "@mantine/hooks";
 import { Suspense } from "react";
@@ -31,7 +30,6 @@ function EmojiPicker({
 }: EmojiPickerInterface) {
   const { t } = useTranslation();
   const [opened, handlers] = useDisclosure(false);
-  const { colorScheme } = useMantineColorScheme();
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const [dropdown, setDropdown] = useState<HTMLDivElement | null>(null);
 
@@ -86,7 +84,7 @@ function EmojiPicker({
             onEmojiSelect={handleEmojiSelect}
             perLine={8}
             skinTonePosition="search"
-            theme={colorScheme}
+            theme="dark"
           />
           <Button
             variant="default"

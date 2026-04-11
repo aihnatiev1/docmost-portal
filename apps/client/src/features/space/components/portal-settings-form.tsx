@@ -60,7 +60,7 @@ const THEME_PRESETS = [
     value: "clean" as const,
     label: "Clean",
     description: "Minimal and modern",
-    colors: ["#ffffff", "#f8f9fa", "#228be6"],
+    colors: ["#ffffff", "#f8f9fa", "#6366F1"],
   },
   {
     value: "muted" as const,
@@ -89,7 +89,7 @@ const THEME_PRESETS = [
 ];
 
 const COLOR_SWATCHES = [
-  "#228be6", "#7950f2", "#12b886", "#e64980",
+  "#6366F1", "#7950f2", "#12b886", "#e64980",
   "#fa5252", "#fd7e14", "#fab005", "#40c057",
   "#15aabf", "#4c6ef5", "#be4bdb", "#845ef7",
 ];
@@ -384,7 +384,7 @@ export function PortalSettingsForm({
                       {t("Logo preview")}
                     </Text>
                     <Group gap="lg">
-                      <Paper p="sm" radius="sm" bg="white" style={{ border: "1px solid var(--mantine-color-gray-3)" }}>
+                      <Paper p="sm" radius="sm" bg="var(--bg-100, #0F1219)" style={{ border: "1px solid var(--mantine-color-gray-3)" }}>
                         <img
                           src={settings.logo}
                           alt="Logo light"
@@ -483,7 +483,7 @@ export function PortalSettingsForm({
                   <ColorInput
                     label={t("Primary color")}
                     description={t("Main brand color for links and accents")}
-                    value={settings.theme?.primaryColor || "#228be6"}
+                    value={settings.theme?.primaryColor || "#6366F1"}
                     onChange={(v) => updateThemeField("primaryColor", v)}
                     format="hex"
                     swatches={COLOR_SWATCHES}
@@ -524,7 +524,7 @@ export function PortalSettingsForm({
                       w={48} h={48}
                       style={{
                         borderRadius: "var(--mantine-radius-md)",
-                        backgroundColor: settings.theme?.primaryColor || "#228be6",
+                        backgroundColor: settings.theme?.primaryColor || "#6366F1",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -545,7 +545,7 @@ export function PortalSettingsForm({
                       <Text size="xs" c="white" fw={700}>Aa</Text>
                     </Box>
                     <Stack gap={2}>
-                      <Text size="sm" fw={500} style={{ color: settings.theme?.primaryColor || "#228be6" }}>
+                      <Text size="sm" fw={500} style={{ color: settings.theme?.primaryColor || "#6366F1" }}>
                         Primary link text
                       </Text>
                       <Text size="sm" fw={500} style={{ color: settings.theme?.accentColor || "#7950f2" }}>
@@ -638,7 +638,7 @@ export function PortalSettingsForm({
                           <Box w={24} h="100%" style={{
                             borderRadius: 4,
                             backgroundColor: style === "filled"
-                              ? (settings.theme?.primaryColor || "#228be6") + "18"
+                              ? (settings.theme?.primaryColor || "#6366F1") + "18"
                               : "var(--mantine-color-default-hover)",
                           }} />
                           <Box style={{ flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
@@ -679,10 +679,10 @@ export function PortalSettingsForm({
                               backgroundColor: i === 1
                                 ? style === "line"
                                   ? "transparent"
-                                  : (settings.theme?.primaryColor || "#228be6") + "20"
+                                  : (settings.theme?.primaryColor || "#6366F1") + "20"
                                 : "transparent",
                               borderLeft: style === "line" && i === 1
-                                ? `2px solid ${settings.theme?.primaryColor || "#228be6"}`
+                                ? `2px solid ${settings.theme?.primaryColor || "#6366F1"}`
                                 : "2px solid transparent",
                               paddingLeft: 6,
                               display: "flex",

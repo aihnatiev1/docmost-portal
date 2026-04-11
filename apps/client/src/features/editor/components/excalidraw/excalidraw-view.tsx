@@ -5,7 +5,6 @@ import {
   Card,
   Group,
   Text,
-  useComputedColorScheme,
 } from "@mantine/core";
 import {
   lazy,
@@ -48,8 +47,6 @@ export default function ExcalidrawView(props: NodeViewProps) {
   });
   const [excalidrawData, setExcalidrawData] = useState<any>(null);
   const [opened, { open, close }] = useDisclosure(false);
-  const computedColorScheme = useComputedColorScheme();
-
   const isDirtyRef = useRef(false);
   const isSavingRef = useRef(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -221,7 +218,7 @@ export default function ExcalidrawView(props: NodeViewProps) {
                 ...excalidrawData,
                 scrollToContent: true,
               }}
-              theme={computedColorScheme}
+              theme="dark"
             />
           </Suspense>
         </div>

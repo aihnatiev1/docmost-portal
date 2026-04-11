@@ -492,8 +492,8 @@ export default function DocsPortalLayout() {
         {showAnnouncement && (
           <div
             style={{
-              background: (portalSettings.theme?.primaryColor || "#228be6") + "14",
-              borderBottom: `1px solid ${(portalSettings.theme?.primaryColor || "#228be6")}28`,
+              background: (portalSettings.theme?.primaryColor || "#6366F1") + "14",
+              borderBottom: `1px solid ${(portalSettings.theme?.primaryColor || "#6366F1")}28`,
               padding: "8px 16px",
               textAlign: "center",
               fontSize: 14,
@@ -506,7 +506,7 @@ export default function DocsPortalLayout() {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  color: portalSettings.theme?.primaryColor || "#228be6",
+                  color: portalSettings.theme?.primaryColor || "#6366F1",
                   textDecoration: "none",
                 }}
               >

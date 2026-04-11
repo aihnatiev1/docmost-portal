@@ -4,7 +4,6 @@ import {
   IconMenu2,
   IconLanguage,
 } from "@tabler/icons-react";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { useDocsPortalContext } from "../context/docs-portal-context";
 import {
   IPortalSettings,
@@ -160,7 +159,6 @@ export default function DocsHeader({
           </Menu>
         )}
 
-        <ThemeToggle />
       </div>
     </div>
   );

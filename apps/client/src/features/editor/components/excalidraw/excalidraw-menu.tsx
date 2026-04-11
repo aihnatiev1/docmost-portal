@@ -12,7 +12,6 @@ import {
   Group,
   Text,
   Tooltip,
-  useComputedColorScheme,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { useDisclosure } from "@mantine/hooks";
@@ -53,7 +52,6 @@ export function ExcalidrawMenu({ editor }: EditorMenuProps) {
     adapter: localStorageLibraryAdapter,
   });
   const [excalidrawData, setExcalidrawData] = useState<any>(null);
-  const computedColorScheme = useComputedColorScheme();
   const isDirtyRef = useRef(false);
   const isSavingRef = useRef(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -424,7 +422,7 @@ export function ExcalidrawMenu({ editor }: EditorMenuProps) {
                 ...excalidrawData,
                 scrollToContent: true,
               }}
-              theme={computedColorScheme}
+              theme="dark"
             />
           </Suspense>
         </div>

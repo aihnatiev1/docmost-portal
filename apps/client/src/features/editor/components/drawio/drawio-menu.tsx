@@ -12,7 +12,6 @@ import {
   Modal,
   Text,
   Tooltip,
-  useComputedColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import clsx from "clsx";
@@ -44,7 +43,6 @@ export function DrawioMenu({ editor }: EditorMenuProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const [initialXML, setInitialXML] = useState<string>("");
   const drawioRef = useRef<DrawIoEmbedRef>(null);
-  const computedColorScheme = useComputedColorScheme();
   const isDirtyRef = useRef(false);
   const isSavingRef = useRef(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -356,7 +354,7 @@ export function DrawioMenu({ editor }: EditorMenuProps) {
                 baseUrl={getDrawioUrl()}
                 autosave
                 urlParameters={{
-                  ui: computedColorScheme === "light" ? "kennedy" : "dark",
+                  ui: "dark",
                   spin: true,
                   libraries: true,
                   saveAndExit: true,
